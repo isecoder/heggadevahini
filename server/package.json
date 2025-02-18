@@ -6,8 +6,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rimraf dist",
     "dev": "tsx src/index.ts",
-    "build": "tsc",
+    "build": "pnpm clean && tsc",
     "start": "NODE_ENV=production node dist/index.js"
   },
   "keywords": [],
@@ -22,6 +23,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.4",
+    "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "tsx": "^4.19.2",
