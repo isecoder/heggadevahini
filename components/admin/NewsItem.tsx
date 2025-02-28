@@ -141,14 +141,16 @@ const NewsItem: React.FC<Props> = ({
 
   return (
     <div className="p-4 bg-white shadow-md rounded-md relative cursor-pointer">
-      <h3 className="text-lg font-semibold">
-        {item.translations?.find((t) => t.languageCode === "kn")?.title ||
-          "No Title Available"}
-      </h3>
-      <p className="text-gray-700">
-        {item.translations?.find((t) => t.languageCode === "kn")?.content ||
-          "No Content Available"}
-      </p>
+  <h3 className="text-lg font-semibold">
+    {item.translations?.find((t) => t.languageCode === (item.id === 15 ? "en" : "kn"))?.title ||
+      "No Title Available"}
+  </h3>
+  <p className="text-gray-700">
+    {item.translations?.find((t) => t.languageCode === (item.id === 15 ? "en" : "kn"))?.content ||
+      "No Content Available"}
+  </p>
+
+
 
       {(item.images ?? []).length > 0 && (
         <div className="flex gap-2 mt-2">
