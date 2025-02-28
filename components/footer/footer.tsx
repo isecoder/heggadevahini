@@ -111,10 +111,10 @@ export default function SiteFooter() {
             </Link>
             <span className="text-muted-foreground/40 hidden sm:inline">|</span>
             <Link
-              href="/subscribe"
+              href="/about/protected/routes/heggade-vahini/admin-portal/login"
               className="hover:text-foreground transition-colors"
             >
-              Subscribe
+              Admin
             </Link>
           </div>
         </nav>
