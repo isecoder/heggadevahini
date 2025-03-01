@@ -1,28 +1,47 @@
 "use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
+import { useLanguage } from "@/components/context/language_content";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { language, toggleLanguage } = useLanguage();
+
+  const navItems = {
+    English: {
+      home: "Home",
+      about: "About Us",
+      ePaper: "E-Paper",
+      latest: "Latest News",
+      subscribe: "Subscribe",
+      contact: "Contact Us",
+    },
+    Kannada: {
+      home: "ಮುಖಪುಟ",
+      about: "ನಮ್ಮ ಬಗ್ಗೆ",
+      ePaper: "ಇ-ಪೇಪರ್",
+      latest: "ತಾಜಾ ಸುದ್ದಿ",
+      subscribe: "ಚಂದಾದಾರರಾಗಿ",
+      contact: "ಸಂಪರ್ಕಿಸಿ",
+    },
+  };
 
   return (
     <>
       {/* Desktop Navbar */}
       <nav className="hidden md:flex items-center space-x-12 font-bold -ml-36">
-        <Link href="/" className="text-black hover:text-[#F48634]">ಮುಖಪುಟ</Link>
-        <Link href="/about" className="text-black hover:text-[#F48634]">ನಮ್ಮ ಬಗ್ಗೆ</Link>
-        <Link href="/e-paper" className="text-black hover:text-[#F48634]">ಇ-ಪೇಪರ್</Link>
-        <Link href="/latest" className="text-black hover:text-[#F48634]">ತಾಜಾ ಸುದ್ದಿ</Link>
-        <Link href="/subscribe" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>ಚಂದಾದಾರರಾಗಿ</Link>
-        <Link href="/contact" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>ಸಂಪರ್ಕಿಸಿ</Link>
-      </nav>
+        <Link href="/" className="text-black ml-12 hover:text-[#F48634]">{navItems[language].home}</Link>
+        <Link href="/about" className="text-black hover:text-[#F48634]">{navItems[language].about}</Link>
+        <Link href="/e-paper" className="text-black hover:text-[#F48634]">{navItems[language].ePaper}</Link>
+        <Link href="/latest" className="text-black hover:text-[#F48634]">{navItems[language].latest}</Link>
+        <Link href="/subscribe" className="text-black hover:text-[#F48634]">{navItems[language].subscribe}</Link>
+        <Link href="/contact" className="text-black hover:text-[#F48634]">{navItems[language].contact}</Link>
+         </nav>
 
       {/* Mobile Menu Button */}
-      <button 
-        className="md:hidden block text-black" 
-        onClick={() => setIsOpen(!isOpen)}
-      >
+      <button className="md:hidden block text-black" onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
       </button>
 
@@ -34,12 +53,13 @@ const Navbar = () => {
           </button>
         </div>
         <nav className="flex flex-col space-y-6 font-bold text-lg p-6">
-          <Link href="/" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>ಮುಖಪುಟ</Link>
-          <Link href="/about" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>ನಮ್ಮ ಬಗ್ಗೆ</Link>
-          <Link href="/e-paper" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>ಇ-ಪೇಪರ್</Link>
-          <Link href="/latest" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>ತಾಜಾ ಸುದ್ದಿ</Link>
-          <Link href="/subscribe" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>ಚಂದಾದಾರರಾಗಿ</Link>
-          <Link href="/contact" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>ಸಂಪರ್ಕಿಸಿ</Link>
+          <Link href="/" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].home}</Link>
+          <Link href="/about" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].about}</Link>
+          <Link href="/e-paper" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].ePaper}</Link>
+          <Link href="/latest" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].latest}</Link>
+          <Link href="/subscribe" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].subscribe}</Link>
+          <Link href="/contact" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].contact}</Link>
+          <button onClick={toggleLanguage} className="text-black font-bold hover:text-[#F48634]">{language}</button>
         </nav>
       </div>
 
