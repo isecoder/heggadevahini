@@ -7,7 +7,7 @@ import { useLanguage } from "@/components/context/language_content";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { language, toggleLanguage } = useLanguage();
+  const { language } = useLanguage();
 
   const navItems = {
     English: {
@@ -59,8 +59,7 @@ const Navbar = () => {
           <Link href="/latest" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].latest}</Link>
           <Link href="/subscribe" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].subscribe}</Link>
           <Link href="/contact" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].contact}</Link>
-          <button onClick={toggleLanguage} className="text-black font-bold hover:text-[#F48634]">{language}</button>
-        </nav>
+           </nav>
       </div>
 
       {/* Overlay when menu is open */}
