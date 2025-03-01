@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useRouter } from "next/navigation";
 
 interface NewsItem {
   id: number;
   updatedAt: string;
+  title?: string; // Ensure `title` exists
   images: { id: number; url: string }[];
-  title: string;
-  content: string;
+  translations?: { id: number; languageCode: string; title: string; content: string }[];
 }
 
 const LatestNews = () => {
@@ -20,7 +21,7 @@ const LatestNews = () => {
     try {
       const res = await fetch("/api/v1/news", { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to fetch news");
-
+      
       const data = await res.json();
       const sortedNews = data.data.sort(
         (a: NewsItem, b: NewsItem) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
@@ -37,6 +38,7 @@ const LatestNews = () => {
   useEffect(() => {
     fetchNews();
   }, []);
+  const router = useRouter();
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -52,8 +54,17 @@ const LatestNews = () => {
             return (
               <div key={item.id} className="bg-white p-4 rounded-lg shadow-lg">
                 <Image src={imageUrl} alt={item.title || "News Image"} width={400} height={250} className="rounded-md" />
-                <h2 className="text-xl font-semibold mt-3">{item.title || "Untitled News"}</h2>
-                <p className="text-gray-700 mt-2">{item.content || "No description available."}</p>
+                <h2 
+  onClick={() => router.push(`/news/${item.id}`)} 
+  className="text-xl font-semibold mt-3 cursor-pointer hover:underline"
+>
+  {item.translations?.[0]?.title || "Untitled News"}
+</h2>
+
+<p className="text-gray-700 mt-2">
+  {item.translations?.[0]?.content.slice(0, 150) || "No description available."}
+</p>
+
                 <p className="text-sm text-gray-500 mt-2">{new Date(item.updatedAt).toLocaleDateString()}</p>
               </div>
             );
