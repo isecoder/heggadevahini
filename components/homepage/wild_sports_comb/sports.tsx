@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import {  ArrowRight } from "lucide-react";
 
 const API_URL = "/api/v1/news";
 
