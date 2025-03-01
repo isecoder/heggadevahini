@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
-const API_BASE_URL = "/api/v1/news"; 
+const API_BASE_URL = "/api/v1/news";
 
 interface NewsItem {
   id: number;
@@ -38,7 +38,10 @@ const Trending = () => {
         // ✅ Filter trending news & sort by updatedAt (latest first)
         const trendingNews = data.data
           .filter((item: NewsItem) => item.tags.includes("Trending"))
-          .sort((a: NewsItem, b: NewsItem) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+          .sort(
+            (a: NewsItem, b: NewsItem) =>
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          )
           .slice(0, 4); // ✅ Get only the latest 4 news items
 
         setNews(trendingNews);
@@ -57,7 +60,7 @@ const Trending = () => {
     <section className="p-4 sm:p-6 bg-gray-100 w-full sm:max-w-3xl mx-auto">
       <h2 className="text-xl font-semibold flex justify-between items-center">
         Trending News
-        <Link href="/trending_view_all" className="text-[#F48634] text-sm">
+        <Link href="/trending" className="text-[#F48634] text-sm">
           View all →
         </Link>
       </h2>
