@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
-const API_URL = "http://13.201.87.147/api/v1/news";
+const API_URL = "/api/v1/news";
 
 interface Translation {
   languageCode: string;

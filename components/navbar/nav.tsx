@@ -33,11 +33,11 @@ const Navbar = () => {
       {/* Desktop Navbar */}
       <nav className="hidden md:flex items-center space-x-12 font-bold -ml-36">
         <Link href="/" className="text-black ml-12 hover:text-[#F48634]">{navItems[language].home}</Link>
-        <Link href="/about" className="text-black hover:text-[#F48634]">{navItems[language].about}</Link>
         <Link href="/e-paper" className="text-black hover:text-[#F48634]">{navItems[language].ePaper}</Link>
         <Link href="/latest" className="text-black hover:text-[#F48634]">{navItems[language].latest}</Link>
         <Link href="/subscribe" className="text-black hover:text-[#F48634]">{navItems[language].subscribe}</Link>
         <Link href="/contact" className="text-black hover:text-[#F48634]">{navItems[language].contact}</Link>
+        <Link href="/about" className="text-black hover:text-[#F48634]">{navItems[language].about}</Link>
          </nav>
 
       {/* Mobile Menu Button */}
@@ -54,11 +54,11 @@ const Navbar = () => {
         </div>
         <nav className="flex flex-col space-y-6 font-bold text-lg p-6">
           <Link href="/" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].home}</Link>
-          <Link href="/about" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].about}</Link>
           <Link href="/e-paper" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].ePaper}</Link>
           <Link href="/latest" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].latest}</Link>
           <Link href="/subscribe" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].subscribe}</Link>
           <Link href="/contact" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].contact}</Link>
+          <Link href="/about" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].about}</Link>
            </nav>
       </div>
 

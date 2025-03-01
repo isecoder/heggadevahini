@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
-const API_URL = "http://13.201.87.147/api/v1/news";
+const API_URL = "/api/v1/news";
 
 interface Translation {
   languageCode: string;
