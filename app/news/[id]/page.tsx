@@ -125,10 +125,10 @@ export default function NewsDetails() {
   // Extract English Translation (Fallback to Kannada)
   const englishTranslation =
     news?.translations?.find(
-      (t: { languageCode: string }) => t.languageCode === "kn"
+      (t: { languageCode: string }) => t.languageCode === "en"
     ) ||
     news?.translations?.find(
-      (t: { languageCode: string }) => t.languageCode === "en"
+      (t: { languageCode: string }) => t.languageCode === "kn"
     ) ||
     null;
 
@@ -282,11 +282,11 @@ export default function NewsDetails() {
           </div>
         )}
 
-        <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+        {/* <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
           {content.split("\n").map((paragraph: string, idx: number) => (
             <p key={idx}>{paragraph}</p>
           ))}
-        </div>
+        </div> */}
 
         <div className="mt-8 flex justify-end">
           <button
