@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+import Link from "next/link";
 import Image from "next/image";
 
-const API_BASE_URL = "/api/v1/news"; // ✅ Correct API URL
+const API_BASE_URL = "/api/v1/news";
 
-// Define NewsItem interface
 interface NewsItem {
   id: number;
   createdAt: string;
@@ -22,141 +20,90 @@ interface NewsItem {
   }[];
 }
 
+const fetchPoliticsNews = async (): Promise<NewsItem[]> => {
+  try {
+    const response = await fetch(API_BASE_URL, { cache: "no-store" });
+    if (!response.ok) throw new Error("Failed to fetch news");
+
+    const data = await response.json();
+    if (!data.success || !Array.isArray(data.data))
+      throw new Error("Invalid response");
+
+    return data.data.filter((item: NewsItem) => item.tags.includes("Politics"));
+  } catch (error) {
+    console.error("Error fetching politics news:", error);
+    return [];
+  }
+};
+
 const Politics = () => {
-  const [newsList, setNewsList] = useState<NewsItem[]>([]); // Type the newsList as NewsItem[]
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [newsList, setNewsList] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const router = useRouter();
 
   useEffect(() => {
-    const fetchPoliticsNews = async () => {
-      try {
-        const response = await fetch(API_BASE_URL);
-        if (!response.ok) throw new Error("Failed to fetch news");
-
-        const data = await response.json();
-        if (data.success && data.data.length > 0) {
-          // Filter news containing the "Politics" tag
-          const politicsNews = data.data
-            .filter((news: NewsItem) => news.tags.includes("Politics")) // Change 'Latest' to 'Politics'
-            .sort(
-              (a: NewsItem, b: NewsItem) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
-            )
-            .slice(0, 3); // Get the latest 3 politics news articles
-
-          if (politicsNews.length === 0)
-            throw new Error("No 'Politics' news available.");
-
-          setNewsList(politicsNews);
-        } else {
-          throw new Error("No news available.");
-        }
-      } catch (err: unknown) {
-        // Cast 'err' to Error type
-        if (err instanceof Error) {
-          setError(err.message);
-        }
-      } finally {
-        setLoading(false);
-      }
+    const loadNews = async () => {
+      const articles = await fetchPoliticsNews();
+      setNewsList(articles);
+      setLoading(false);
     };
 
-    fetchPoliticsNews();
+    loadNews();
   }, []);
 
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev === 0 ? newsList.length - 1 : prev - 1));
-  };
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev === newsList.length - 1 ? 0 : prev + 1));
-  };
-
-  if (loading) return <p>Loading politics news...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
-  if (newsList.length === 0) return <p>No politics news available.</p>;
-
-  const news = newsList[currentIndex];
-
   return (
-    <section className="bg-[#FFF3E9] p-4 rounded-lg">
-      <div className="relative group">
-        {/* Image and Controls */}
-        <div className="relative h-[400px] mb-4">
-          {news.images.length > 0 ? (
-            <Image
-              src={news.images[0].url}
-              alt={news.translations[0]?.title || "News Image"}
-              fill
-              className="rounded-lg object-cover"
-            />
-          ) : (
-            <Image
-              src="/placeholder.svg?height=400&width=600"
-              alt="Placeholder Image"
-              fill
-              className="rounded-lg object-cover"
-            />
-          )}
-
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </button>
-
-          <button
-            onClick={() => router.push(`/news/${news.id}`)}
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white/80 rounded-full flex items-center justify-center hover:bg-white"
-          >
-            <Play className="h-8 w-8 ml-1" />
-          </button>
-
-          <div className="absolute top-4 right-4 bg-white/80 px-2 py-1 rounded text-sm">
-            {Math.ceil(news.translations[0]?.content.length / 500)} mins read
-          </div>
-        </div>
-
-        {/* Content */}
-        <h2
-          onClick={() => router.push(`/news/${news.id}`)}
-          className="text-2xl font-bold mb-2 cursor-pointer hover:underline"
-        >
-          {news.translations[0]?.title || "No Title"}
+    <section className="w-full px-4 sm:px-6 bg-gray-100 py-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          <span className="p-1 bg-blue-100 rounded">📰</span> ರಾಜಕೀಯ ( Politics )
         </h2>
-        <p className="text-gray-600">
-          {news.translations[0]?.content.slice(0, 150)}...
-        </p>
-
-        {/* Tags (Filtered to Only Show "Politics") */}
-        <div className="mt-3 flex gap-2">
-          {news.tags
-            .filter((tag: string) => tag === "Politics") // Change 'Latest' to 'Politics'
-            .map(
-              (
-                tag: string,
-                index: number // Define type for 'index' as number
-              ) => (
-                <span
-                  key={index}
-                  className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm cursor-pointer"
-                >
-                  {tag}
-                </span>
-              )
-            )}
-        </div>
+        <Link href="/politics" className="text-[#F48634] text-sm">
+          ಎಲ್ಲಾ ನೋಡಿ →
+        </Link>
       </div>
+
+      {loading ? (
+        <p className="text-center py-4">ಲೋಡಿಂಗ್...</p>
+      ) : newsList.length === 0 ? (
+        <p className="text-center text-gray-600">ರಾಜಕೀಯ ಸುದ್ದಿಗಳು ಲಭ್ಯವಿಲ್ಲ.</p>
+      ) : (
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth no-scrollbar">
+          {newsList.map((news) => {
+            const imageUrl =
+              news.images.length > 0 ? news.images[0].url : "/placeholder.jpg";
+            const kannadaTranslation = news.translations.find(
+              (t) => t.languageCode === "kn"
+            );
+
+            return (
+              <Link
+                key={news.id}
+                href={`/news/${news.id}`}
+                className="snap-center min-w-[280px] sm:min-w-[300px]"
+              >
+                <article className="bg-white rounded-lg shadow hover:shadow-lg transition p-4">
+                  <div className="relative h-36 sm:h-40 w-full mb-3">
+                    <Image
+                      src={imageUrl}
+                      alt={kannadaTranslation?.title || "ಸುದ್ದಿ"}
+                      fill
+                      className="object-cover rounded-md"
+                    />
+                  </div>
+                  <h3 className="font-semibold text-lg text-gray-800 group-hover:text-[#F48634] line-clamp-2">
+                    {kannadaTranslation?.title || "ಶೀರ್ಷಿಕೆ ಲಭ್ಯವಿಲ್ಲ"}
+                  </h3>
+                  <p className="text-gray-600 text-sm line-clamp-2">
+                    {kannadaTranslation?.content || "ವಿವರ ಲಭ್ಯವಿಲ್ಲ."}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {new Date(news.updatedAt).toLocaleDateString("kn-IN")}
+                  </p>
+                </article>
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 };

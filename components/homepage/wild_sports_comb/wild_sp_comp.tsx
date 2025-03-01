@@ -3,7 +3,7 @@ import Sports from "./sports";
 
 const Wild_sp_comp = () => {
   return (
-    <main className="container mx-auto p-4 space-y-8">
+    <main className="w-full min-h-screen mx-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col gap-8">
       <Wildlife />
       <Sports />
     </main>

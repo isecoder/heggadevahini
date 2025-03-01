@@ -1,64 +1,76 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
-const API_BASE_URL = "/api/v1/news"; // ✅ Correct API URL
+const API_URL = "/api/v1/news";
 
-// Define NewsItem interface
-interface NewsItem {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-  tags: string[];
-  images: { id: number; url: string }[];
-  translations: {
-    id: number;
-    languageCode: string;
-    title: string;
-    content: string;
+interface Translation {
+  languageCode: string;
+  title: string;
+  content: string;
+}
+
+interface NewsArticle {
+  id: string;
+  title: string;
+  description: string;
+  image: string | null;
+}
+
+interface ApiResponse {
+  success: boolean;
+  data: {
+    id: string;
+    tags: string[];
+    translations: Translation[];
+    images: { url: string }[];
   }[];
 }
 
 const Sports = () => {
-  const [newsList, setNewsList] = useState<NewsItem[]>([]); // Type the newsList as NewsItem[]
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const router = useRouter();
+  const [sportsNews, setSportsNews] = useState<NewsArticle[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchSportsNews = async () => {
       try {
-        const response = await fetch(API_BASE_URL);
-        if (!response.ok) throw new Error("Failed to fetch news");
+        const response = await fetch(API_URL);
+        const data: ApiResponse = await response.json();
+        console.log("Sports API Response:", data);
 
-        const data = await response.json();
-        if (data.success && data.data.length > 0) {
-          // Filter news containing the "Sports" tag
-          const sportsNews = data.data
-            .filter((news: NewsItem) => news.tags.includes("Sports")) // Change 'Politics' to 'Sports'
-            .sort(
-              (a: NewsItem, b: NewsItem) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
-            )
-            .slice(0, 3); // Get the latest 3 sports news articles
+        if (data.success && data.data) {
+          const sportsArticles = data.data.filter((article) =>
+            article.tags.some((tag) => tag.toLowerCase() === "sports")
+          );
 
-          if (sportsNews.length === 0)
-            throw new Error("No 'Sports' news available.");
+          console.log("Filtered Sports Articles:", sportsArticles);
 
-          setNewsList(sportsNews);
-        } else {
-          throw new Error("No news available.");
+          const sportsNewsKannada: NewsArticle[] = sportsArticles.map(
+            (article) => {
+              const kannadaTranslation = article.translations.find(
+                (t) => t.languageCode === "kn"
+              );
+              return {
+                id: article.id,
+                title: kannadaTranslation
+                  ? kannadaTranslation.title
+                  : "No Title",
+                description: kannadaTranslation
+                  ? kannadaTranslation.content
+                  : "No Description",
+                image: article.images.length > 0 ? article.images[0].url : null,
+              };
+            }
+          );
+
+          setSportsNews(sportsNewsKannada);
         }
-      } catch (err: unknown) {
-        // Cast 'err' to Error type
-        if (err instanceof Error) {
-          setError(err.message);
-        }
+      } catch (error) {
+        console.error("Error fetching sports news:", error);
       } finally {
         setLoading(false);
       }
@@ -67,98 +79,74 @@ const Sports = () => {
     fetchSportsNews();
   }, []);
 
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev === 0 ? newsList.length - 1 : prev - 1));
-  };
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev === newsList.length - 1 ? 0 : prev + 1));
-  };
-
-  if (loading) return <p>Loading sports news...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
-  if (newsList.length === 0) return <p>No sports news available.</p>;
-
-  const news = newsList[currentIndex];
-
   return (
-    <section className="bg-[#FFF3E9] p-4 rounded-lg">
-      <div className="relative group">
-        {/* Image and Controls */}
-        <div className="relative h-[400px] mb-4">
-          {news.images.length > 0 ? (
-            <Image
-              src={news.images[0].url}
-              alt={news.translations[0]?.title || "News Image"}
-              fill
-              className="rounded-lg object-cover"
-            />
-          ) : (
-            <Image
-              src="/placeholder.svg?height=400&width=600"
-              alt="Placeholder Image"
-              fill
-              className="rounded-lg object-cover"
-            />
-          )}
-
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </button>
-
-          <button
-            onClick={() => router.push(`/news/${news.id}`)}
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white/80 rounded-full flex items-center justify-center hover:bg-white"
-          >
-            <Play className="h-8 w-8 ml-1" />
-          </button>
-
-          <div className="absolute top-4 right-4 bg-white/80 px-2 py-1 rounded text-sm">
-            {Math.ceil(news.translations[0]?.content.length / 500)} mins read
-          </div>
-        </div>
-
-        {/* Content */}
-        <h2
-          onClick={() => router.push(`/news/${news.id}`)}
-          className="text-2xl font-bold mb-2 cursor-pointer hover:underline"
-        >
-          {news.translations[0]?.title || "No Title"}
+    <section className="relative bg-gray-50 p-4 sm:p-6 lg:p-8 rounded-xl">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-semibold text-gray-800">
+          ಕ್ರೀಡೆ ( Sports )
         </h2>
-        <p className="text-gray-600">
-          {news.translations[0]?.content.slice(0, 150)}...
-        </p>
-
-        {/* Tags (Filtered to Only Show "Sports") */}
-        <div className="mt-3 flex gap-2">
-          {news.tags
-            .filter((tag: string) => tag === "Sports") // Change 'Politics' to 'Sports'
-            .map(
-              (
-                tag: string,
-                index: number // Define type for 'index' as number
-              ) => (
-                <span
-                  key={index}
-                  className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm cursor-pointer"
-                >
-                  {tag}
-                </span>
-              )
-            )}
-        </div>
+        <Link
+          href="/sports"
+          className="text-sm text-slate-600 hover:text-slate-900 flex items-center gap-1 transition-colors duration-200"
+        >
+          ಎಲ್ಲಾ ನೋಡಿ <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
+
+      {loading ? (
+        <p className="text-center py-4">Loading...</p>
+      ) : sportsNews.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {sportsNews.map((news) => (
+            <SportsCard
+              key={news.id}
+              id={news.id}
+              image={news.image}
+              title={news.title}
+              description={news.description}
+            />
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-500 text-center">
+          ಯಾವುದೇ ಕ್ರಿಕೆಟ್ ಸುದ್ದಿ ಲಭ್ಯವಿಲ್ಲ.
+        </p>
+      )}
     </section>
   );
 };
+
+interface SportsCardProps {
+  id: string;
+  image: string | null;
+  title: string;
+  description: string;
+}
+
+const SportsCard: React.FC<SportsCardProps> = ({
+  id,
+  image,
+  title,
+  description,
+}) => (
+  <Link href={`/news/${id}`} className="block">
+    <Card className="overflow-hidden cursor-pointer transition-transform duration-200 hover:scale-105">
+      <CardContent className="p-0">
+        <div className="relative aspect-video">
+          <Image
+            src={image || "/placeholder.svg"}
+            alt={title}
+            fill
+            className="object-cover"
+          />
+        </div>
+        <div className="p-4">
+          <h3 className="font-semibold line-clamp-2">{title}</h3>
+          <p className="text-sm text-gray-600 line-clamp-2">{description}</p>
+        </div>
+      </CardContent>
+    </Card>
+  </Link>
+);
 
 export default Sports;

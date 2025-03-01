@@ -36,8 +36,8 @@ export default function NewsDetails() {
         const response = await fetch(`${API_BASE_URL}/${id}`);
         if (!response.ok) throw new Error("News not found");
 
-        const data = await response.json();
 
+        const data = await response.json();
         if (data.success && data.data) {
           setNews(data.data);
         } else {
@@ -54,11 +54,9 @@ export default function NewsDetails() {
     if (id) fetchNews();
   }, [id]);
 
-  // Reading progress tracker
   useEffect(() => {
     const handleScroll = () => {
       if (!articleRef.current) return;
-
       const element = articleRef.current;
       const totalHeight = element.scrollHeight - element.clientHeight;
       const windowScrollTop = window.scrollY - element.offsetTop;
@@ -79,10 +77,7 @@ export default function NewsDetails() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="flex flex-col items-center">
-          <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-gray-600 font-medium">Loading article...</p>
-        </div>
+        <p className="text-gray-600 font-medium">ಸುದ್ದಿ ಲೋಡ್ ಆಗುತ್ತಿದೆ...</p>
       </div>
     );
   }
@@ -96,12 +91,8 @@ export default function NewsDetails() {
             Error Loading Article
           </h2>
           <p className="text-gray-600 mb-6">{error}</p>
-          <Link
-            href="/news"
-            className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to News
+          <Link href="/news" className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
+            <ArrowLeft className="mr-2 h-4 w-4" /> ಹಿಂದಕ್ಕೆ ಹೋಗಿ
           </Link>
         </div>
       </div>
@@ -134,10 +125,10 @@ export default function NewsDetails() {
   // Extract English Translation (Fallback to Kannada)
   const englishTranslation =
     news?.translations?.find(
-      (t: { languageCode: string }) => t.languageCode === "en"
+      (t: { languageCode: string }) => t.languageCode === "kn"
     ) ||
     news?.translations?.find(
-      (t: { languageCode: string }) => t.languageCode === "kn"
+      (t: { languageCode: string }) => t.languageCode === "en"
     ) ||
     null;
 
@@ -148,8 +139,7 @@ export default function NewsDetails() {
   const mainImage = news?.images?.length > 0 ? news.images[0].url : null;
   const allImages = news?.images || [];
 
-  // Format date
-  const formattedDate = new Date(news.createdAt).toLocaleDateString("en-US", {
+  const formattedDate = new Date(news.createdAt).toLocaleDateString("kn-IN", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -161,13 +151,8 @@ export default function NewsDetails() {
 
   return (
     <div className="min-h-screen bg-white" ref={articleRef}>
-      {/* Reading Progress Bar */}
-      <div
-        className="fixed top-0 left-0 h-1 bg-orange-500 z-50 transition-all duration-300 ease-out"
-        style={{ width: `${readingProgress}%` }}
-      />
+      <div className="fixed top-0 left-0 h-1 bg-orange-500 z-50 transition-all duration-300 ease-out" style={{ width: `${readingProgress}%` }} />
 
-      {/* Hero Section with Main Image */}
       <div className="relative w-full h-[50vh] md:h-[60vh] lg:h-[70vh] overflow-hidden">
         {mainImage ? (
           <>
@@ -178,27 +163,10 @@ export default function NewsDetails() {
               <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/30" />
             </div>
             <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 text-white">
-              <div className="max-w-4xl mx-auto w-full">
-                <Link
-                  href="/"
-                  className="inline-flex items-center mb-6 text-white/90 hover:text-white transition-colors"
-                >
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to News
-                </Link>
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4 drop-shadow-md">
-                  {title}
-                </h1>
-                <div className="flex flex-wrap items-center gap-4 text-sm md:text-base text-white/90">
-                  <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    {formattedDate}
-                  </div>
-                  <div className="flex items-center">
-                    <Clock className="h-4 w-4 mr-1" />
-                    {readingTime} min read
-                  </div>
-                </div>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-4">{title}</h1>
+              <div className="flex flex-wrap items-center gap-4 text-white/90">
+                <Calendar className="h-4 w-4 mr-1" /> {formattedDate}
+                <Clock className="h-4 w-4 mr-1" /> {readingTime} ನಿಮಿಷ ಓದು
               </div>
             </div>
           </>
@@ -314,12 +282,30 @@ export default function NewsDetails() {
           </div>
         )}
 
-        {/* Publication Info */}
-        <div className="mt-12 pt-8 border-t border-gray-200">
-          <div className="flex flex-wrap justify-between items-center text-sm text-gray-500">
-            <p>Published on: {new Date(news.createdAt).toLocaleString()}</p>
-            <p>Article ID: {id}</p>
-          </div>
+        <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+          {content.split("\n").map((paragraph: string, idx: number) => (
+            <p key={idx}>{paragraph}</p>
+          ))}
+        </div>
+
+        <div className="mt-8 flex justify-end">
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({
+                  title: title,
+                  url: window.location.href,
+                });
+              } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert("ಲಿಂಕ್ ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ನಕಲಿಸಲಾಗಿದೆ!");
+              }
+            }}
+            className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+          >
+            <Share2 className="mr-2 h-4 w-4" />
+            ಹಂಚಿಕೊಳ್ಳಿ
+          </button>
         </div>
       </div>
     </div>

@@ -5,36 +5,37 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 interface NewsItem {
   id: number;
-  createdAt: string;
+  updatedAt: string;
   images: { id: number; url: string }[];
-  translations: { id: number; languageCode: string; title: string; content: string }[];
+  title: string;
+  content: string;
 }
 
 const LatestNews = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
-  const [loading, setLoading] = useState(true); // Set loading true initially
+  const [loading, setLoading] = useState(true);
 
-  const fetchNews = async (isInitialFetch = false) => {
-    if (isInitialFetch) setLoading(true); // Only show loading on the first fetch
-
+  const fetchNews = async () => {
+    setLoading(true);
     try {
-      const res = await fetch(`/api/v1/news`, { cache: "no-store" });
+      const res = await fetch("http://13.201.87.147/api/v1/news", { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to fetch news");
 
       const data = await res.json();
-      setNews(Array.isArray(data.data) ? data.data : []);
+      const sortedNews = data.data.sort(
+        (a: NewsItem, b: NewsItem) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      );
+      setNews(sortedNews);
     } catch (error) {
       console.error("Error fetching news:", error);
       setNews([]);
     } finally {
-      if (isInitialFetch) setLoading(false); // Stop loading only after the first fetch
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchNews(true); // Initial fetch with loading spinner
-    const interval = setInterval(() => fetchNews(false), 2000); // Subsequent fetches without loading
-    return () => clearInterval(interval);
+    fetchNews();
   }, []);
 
   return (
@@ -48,13 +49,12 @@ const LatestNews = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {news.map((item) => {
             const imageUrl = item.images.length > 0 ? item.images[0].url : "/placeholder.jpg";
-            const englishTranslation = item.translations.find((t) => t.languageCode === "en");
             return (
               <div key={item.id} className="bg-white p-4 rounded-lg shadow-lg">
-                <Image src={imageUrl} alt={englishTranslation?.title || "News Image"} width={400} height={250} className="rounded-md" />
-                <h2 className="text-xl font-semibold mt-3">{englishTranslation?.title || "Untitled News"}</h2>
-                <p className="text-gray-700 mt-2">{englishTranslation?.content || "No description available."}</p>
-                <p className="text-sm text-gray-500 mt-2">{new Date(item.createdAt).toLocaleDateString()}</p>
+                <Image src={imageUrl} alt={item.title || "News Image"} width={400} height={250} className="rounded-md" />
+                <h2 className="text-xl font-semibold mt-3">{item.title || "Untitled News"}</h2>
+                <p className="text-gray-700 mt-2">{item.content || "No description available."}</p>
+                <p className="text-sm text-gray-500 mt-2">{new Date(item.updatedAt).toLocaleDateString()}</p>
               </div>
             );
           })}

@@ -22,7 +22,7 @@ const EpaperPage = () => {
   useEffect(() => {
     const fetchEpapers = async () => {
       try {
-        const response = await fetch("http://13.201.87.147/api/v1/epaper");
+        const response = await fetch("/api/v1/epaper");
         if (!response.ok) throw new Error("Failed to fetch e-papers.");
 
         const { data } = await response.json();

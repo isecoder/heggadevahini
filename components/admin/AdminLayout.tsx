@@ -39,15 +39,18 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
     try {
       const response = await fetch(`/api/v1/auth/logout`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
       });
 
       if (!response.ok) throw new Error("Logout failed");
 
-      const data = await response.json();
+      // Clear session storage and reset user state
+      sessionStorage.removeItem("adminToken");
       setUser(null);
+
+      const data = await response.json();
       setMessage(data.message);
-      router.push("/admin/login");
+
+      router.push("/about/protected/routes/heggade-vahini/admin-portal/login");
     } catch (error) {
       setMessage(
         error instanceof Error ? error.message : "An unexpected error occurred."

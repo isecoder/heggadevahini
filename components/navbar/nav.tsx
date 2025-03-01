@@ -11,12 +11,12 @@ const Navbar = () => {
     
       <nav className="hidden md:flex items-center space-x-12 font-bold -ml-36">
         <Link href="/" className="text-black hover:text-[#F48634]">Home</Link>
-        <Link href="/about" className="text-black hover:text-[#F48634]">About</Link>
+        <Link href="/about" className="text-black hover:text-[#F48634]">About us</Link>
         <Link href="/e-paper" className="text-black hover:text-[#F48634]">E-Paper</Link>
         <Link href="/latest" className="text-black hover:text-[#F48634]">Latest News</Link>
-        <Link href="/videos" className="text-black hover:text-[#F48634]">Videos</Link>
-        <Link href="/subscribe" className="text-black hover:text-[#F48634]">Subscribe</Link>
-      </nav>
+        <Link href="/subscribe" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>Subscribe</Link>
+        <Link href="/contact" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>Contact Us</Link>
+        </nav>
 
      
       <button 
@@ -35,11 +35,11 @@ const Navbar = () => {
         </div>
         <nav className="flex flex-col space-y-6 font-bold text-lg p-6">
         <Link href="/" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>Home</Link>
-          <Link href="/about" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>About</Link>
+          <Link href="/about" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>About us</Link>
           <Link href="/e-paper" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>E-Paper</Link>
           <Link href="/latest" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>Latest News</Link>
-          <Link href="/videos" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>Videos</Link>
           <Link href="/subscribe" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>Subscribe</Link>
+          <Link href="/contact" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>Contact Us</Link>
         </nav>
       </div>
 
