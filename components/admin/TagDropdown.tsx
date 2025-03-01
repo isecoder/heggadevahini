@@ -8,6 +8,7 @@ interface Props {
   setSelectedTag: React.Dispatch<
     React.SetStateAction<{ [key: number]: number }>
   >;
+  adminToken: string; // Token for authorization
 }
 
 const TagDropdown: React.FC<Props> = ({
@@ -15,14 +16,37 @@ const TagDropdown: React.FC<Props> = ({
   tags,
   selectedTag,
   setSelectedTag,
+  adminToken,
 }) => {
+  const handleTagChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const tagId = parseInt(e.target.value);
+    setSelectedTag((prev) => ({ ...prev, [newsId]: tagId }));
+
+    try {
+      const response = await fetch(`/api/v1/news/${newsId}/tags`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({ tagId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add tag to news");
+      }
+
+      console.log("Tag added successfully");
+    } catch (error) {
+      console.error("Error adding tag:", error);
+    }
+  };
+
   return (
     <select
       className="border p-1 rounded-md"
       value={selectedTag[newsId] || 0}
-      onChange={(e) =>
-        setSelectedTag({ ...selectedTag, [newsId]: parseInt(e.target.value) })
-      }
+      onChange={handleTagChange}
     >
       <option value={0} disabled>
         Select a tag

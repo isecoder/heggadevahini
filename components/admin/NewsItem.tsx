@@ -30,15 +30,15 @@ const NewsItem: React.FC<Props> = ({
   selectedTag,
   setSelectedTag,
 }) => {
+  const adminToken = sessionStorage.getItem("adminToken") || "";
+
   const handleDeleteNews = async () => {
-    const adminToken = sessionStorage.getItem("adminToken");
     if (!adminToken) {
       console.error("No admin token found");
       return;
     }
 
     try {
-      // Step 1: Delete all translations associated with this news
       for (const translation of item.translations) {
         const response = await fetch(
           `/api/v1/news/${item.id}/translations/${translation.languageCode}`,
@@ -49,8 +49,8 @@ const NewsItem: React.FC<Props> = ({
               Authorization: `Bearer ${adminToken}`,
             },
             body: JSON.stringify({
-              id: item.id, // ✅ Include newsId in the body
-              languageCode: translation.languageCode, // ✅ Include languageCode in the body
+              id: item.id,
+              languageCode: translation.languageCode,
             }),
           }
         );
@@ -62,7 +62,6 @@ const NewsItem: React.FC<Props> = ({
         }
       }
 
-      // Step 2: Delete all images associated with this news
       for (const image of item.images) {
         const response = await fetch(
           `/api/v1/news/${item.id}/images/${image.id}`,
@@ -73,8 +72,8 @@ const NewsItem: React.FC<Props> = ({
               Authorization: `Bearer ${adminToken}`,
             },
             body: JSON.stringify({
-              id: item.id, // ✅ Include newsId in the body
-              imageId: image.id, // ✅ Include imageId in the body
+              id: item.id,
+              imageId: image.id,
             }),
           }
         );
@@ -86,7 +85,6 @@ const NewsItem: React.FC<Props> = ({
         }
       }
 
-      // Step 3: Delete the news itself
       const deleteResponse = await fetch(`/api/v1/news/${item.id}`, {
         method: "DELETE",
         headers: {
@@ -96,7 +94,6 @@ const NewsItem: React.FC<Props> = ({
 
       if (!deleteResponse.ok) throw new Error("Failed to delete news");
 
-      // Step 4: Remove from UI state
       setNews((prevNews) => prevNews.filter((news) => news.id !== item.id));
       setFilteredNews((prevNews) =>
         prevNews.filter((news) => news.id !== item.id)
@@ -105,6 +102,38 @@ const NewsItem: React.FC<Props> = ({
       console.log(`Deleted news item: ${item.id}`);
     } catch (error) {
       console.error("Error deleting news:", error);
+    }
+  };
+
+  const handleAddTag = async () => {
+    if (!adminToken) {
+      console.error("No admin token found");
+      return;
+    }
+
+    const tagId = selectedTag[item.id];
+    if (!tagId) {
+      console.error("No tag selected");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/v1/news/${item.id}/tags`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({ tagId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add tag");
+      }
+
+      console.log("Tag added successfully");
+    } catch (error) {
+      console.error("Error adding tag:", error);
     }
   };
 
@@ -139,9 +168,16 @@ const NewsItem: React.FC<Props> = ({
         tags={tags}
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
+        adminToken={adminToken}
       />
 
-      {/* ✅ Pass setNews and setFilteredNews to ImageUploader */}
+      <button
+        className="bg-green-500 text-white px-3 py-1 rounded-md text-sm mt-2"
+        onClick={handleAddTag}
+      >
+        Add Tag
+      </button>
+
       <ImageUploader
         newsId={item.id}
         setNews={setNews}
