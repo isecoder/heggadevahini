@@ -10,7 +10,7 @@ const HeaderBar: React.FC = () => {
   useEffect(() => {
     const fetchLatestEpaperTime = async () => {
       try {
-        const response = await fetch("http://13.201.87.147/api/v1/epaper");
+        const response = await fetch("/api/v1/epaper");
         const data = await response.json();
         if (data.success && data.data.length > 0) {
           const releaseDate = new Date(data.data[0].releaseDate);

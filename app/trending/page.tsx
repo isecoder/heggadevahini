@@ -20,7 +20,7 @@ const TrendingNews = () => {
   const fetchNews = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://13.201.87.147/api/v1/news", { cache: "no-store" });
+      const res = await fetch("/api/v1/news", { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to fetch news");
 
       const data = await res.json();
