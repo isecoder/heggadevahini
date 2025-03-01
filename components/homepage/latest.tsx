@@ -38,7 +38,7 @@ const Latest = () => {
         const data = await response.json();
         if (data.success && data.data.length > 0) {
           const latestNews = data.data
-            .filter((news: NewsItem) => news.tags.includes("Latest")) // Type 'news' as NewsItem
+          .filter((news: NewsItem) => news.id === 18)// Type 'news' as NewsItem
             .sort(
               (a: NewsItem, b: NewsItem) =>
                 new Date(b.createdAt).getTime() -
@@ -91,7 +91,7 @@ const Latest = () => {
         <div className="relative w-full h-[220px] sm:h-[350px] md:h-[400px] rounded-lg overflow-hidden">
           <Image
             src={
-              news.images.length > 0 ? news.images[0].url : "/placeholder.svg"
+              news.images.length > 0 ? news.images[0].url : "/news18.jpeg"
             }
             alt={news.translations[0]?.title || "News Image"}
             layout="fill"
