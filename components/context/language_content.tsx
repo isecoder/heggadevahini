@@ -12,16 +12,21 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
-  const [language, setLanguage] = useState<Language>("English");
+  const [language, setLanguage] = useState<Language>("Kannada"); // Default to Kannada
 
-  useEffect(() => {
+  useEffect(() => { try {
     const storedLang = localStorage.getItem("language") as Language;
     if (storedLang) setLanguage(storedLang);
+  }
+  catch (error) {
+    console.log(error);
+  }
   }, []);
 
   const toggleLanguage = () => {
-    setLanguage((prev) => (prev === "English" ? "Kannada" : "English"));
-    localStorage.setItem("language", language === "English" ? "Kannada" : "English");
+    const newLanguage = language === "English" ? "Kannada" : "English";
+    setLanguage(newLanguage);
+    localStorage.setItem("language", newLanguage);
   };
 
   return (
