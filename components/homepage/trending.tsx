@@ -37,7 +37,7 @@ const Trending = () => {
 
         // ✅ Filter trending news & sort by updatedAt (latest first)
         const trendingNews = data.data
-        .filter((news: NewsItem) => news.id === 18)
+          .filter((item: NewsItem) => item.tags.includes("Trending"))
           .sort((a: NewsItem, b: NewsItem) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
           .slice(0, 4); // ✅ Get only the latest 4 news items
 
@@ -70,7 +70,7 @@ const Trending = () => {
       <div className="mt-4 space-y-4">
         {news.map((item) => {
           const imageUrl =
-            item.images.length > 0 ? item.images[0].url : "/news18.jpeg";
+            item.images.length > 0 ? item.images[0].url : "/placeholder.jpg";
           const englishTranslation = item.translations.find(
             (t) => t.languageCode === "en"
           );
