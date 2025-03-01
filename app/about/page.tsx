@@ -94,9 +94,7 @@ const AboutSection = () => {
     <section className="text-center py-32 px-5">
       <h2 className="text-3xl font-bold text-orange-500">{t.aboutTitle}</h2>
       <p className="mt-4 text-gray-600 max-w-3xl mx-auto">{t.aboutContent}</p>
-      <button className="mt-5 px-4 py-2 bg-gray-700 text-white rounded-md">
-        {t.seeMore}
-      </button>
+      
     </section>
   );
 };
