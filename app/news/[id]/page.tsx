@@ -102,7 +102,7 @@ export default function NewsDetails() {
       if (navigator.share) {
         await navigator.share({
           title,
-          text: content.substring(0, 100) + "...",
+          text: title.substring(0, 100) + "...",
           url: currentUrl,
         });
       } else {
@@ -169,19 +169,18 @@ export default function NewsDetails() {
         ))}
       </div>
 
-      <div className="mt-8 flex justify-end">
-        <button onClick={handleShare} className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
-          <Share2 className="mr-2 h-4 w-4" />
-          Share Article
-        </button>
-      </div>
+      <div className="mt-8 flex justify-between">
+  <Link href="/latest" className="inline-flex items-center px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800">
+    <ArrowLeft className="mr-2 h-4 w-4" />
+    Back to News
+  </Link>
 
-      <div className="mt-6">
-        <Link href="/news" className="inline-flex items-center px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to News
-        </Link>
-      </div>
+  <button onClick={handleShare} className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+    <Share2 className="mr-2 h-4 w-4" />
+    Share Article
+  </button>
+</div>
+
     </div>
   );
 }
