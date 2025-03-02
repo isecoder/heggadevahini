@@ -52,22 +52,22 @@ const TranslationModal: React.FC<Props> = ({
           item.id === selectedNewsId
             ? {
                 ...item,
-                translations: [...item.translations, addedTranslation],
+                translations: [...(item.translations || []), addedTranslation],
               }
             : item
         )
       );
-
+      
       setFilteredNews((prevNews) =>
         prevNews.map((item) =>
           item.id === selectedNewsId
             ? {
                 ...item,
-                translations: [...item.translations, addedTranslation],
+                translations: [...(item.translations || []), addedTranslation],
               }
             : item
         )
-      );
+      );      
 
       setIsModalOpen(false);
       setTranslation({ languageCode: "en", title: "", content: "" });
