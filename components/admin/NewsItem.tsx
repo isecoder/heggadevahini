@@ -142,11 +142,11 @@ const NewsItem: React.FC<Props> = ({
   return (
     <div className="p-4 bg-white shadow-md rounded-md relative cursor-pointer">
       <h3 className="text-lg font-semibold">
-        {item.translations?.find((t) => t.languageCode === "en")?.title ||
+        {item.translations?.find((t) => t.languageCode === "kn")?.title ||
           "No Title Available"}
       </h3>
       <p className="text-gray-700">
-        {item.translations?.find((t) => t.languageCode === "en")?.content ||
+        {item.translations?.find((t) => t.languageCode === "kn")?.content ||
           "No Content Available"}
       </p>
 
