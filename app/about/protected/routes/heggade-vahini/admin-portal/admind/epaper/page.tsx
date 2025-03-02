@@ -73,11 +73,13 @@ const Epaper = () => {
         },
       });
       console.log(response);
+      alert("E-paper deleted successfully.");
       if (!response.ok) throw new Error("Failed to delete e-paper.");
       setEpapers((prev) => prev.filter((epaper) => epaper.id !== id));
     } catch (err) {
       console.error(err); // Logging the error
       setError("Error deleting e-paper.");
+      alert("Failed to delete e-paper.");
     }
   };
 

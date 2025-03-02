@@ -65,10 +65,10 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
       </h1>
 
       {loading ? (
-        <p className="text-center mt-2">Loading user...</p>
+        <p className="text-center mt-2">Logged in as Admin </p>
       ) : user ? (
         <p className="text-center mt-2">
-          Logged in as:{" "}
+          Logged in as:Admin
           <span className="font-bold text-green-700">{user.name}</span>
         </p>
       ) : (

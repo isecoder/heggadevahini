@@ -66,8 +66,10 @@ const ImageUploader: React.FC<Props> = ({
       );
 
       console.log("Image uploaded successfully:", newImage);
+      alert("Image uploaded successfully");
     } catch (error) {
       console.error("Error uploading image:", error);
+      alert("Error uploading image");
     }
   };
 

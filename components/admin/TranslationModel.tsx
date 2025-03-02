@@ -73,8 +73,10 @@ const TranslationModal: React.FC<Props> = ({
       setTranslation({ languageCode: "en", title: "", content: "" });
 
       console.log("Translation added successfully:", addedTranslation);
+      alert("Translation added successfully");
     } catch (error) {
       console.error("Error adding translation:", error);
+      alert("Error adding translation");
     }
   };
 

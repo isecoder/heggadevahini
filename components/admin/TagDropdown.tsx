@@ -37,8 +37,10 @@ const TagDropdown: React.FC<Props> = ({
       }
 
       console.log("Tag added successfully");
+      alert("Tag added successfully");
     } catch (error) {
       console.error("Error adding tag:", error);
+      alert("Failed to add tag");
     }
   };
 

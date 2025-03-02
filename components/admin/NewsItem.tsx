@@ -100,8 +100,10 @@ const NewsItem: React.FC<Props> = ({
       );
 
       console.log(`Deleted news item: ${item.id}`);
+      alert("News deleted successfully");
     } catch (error) {
       console.error("Error deleting news:", error);
+      alert("Failed to delete news");
     }
   };
 

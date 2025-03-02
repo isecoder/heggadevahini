@@ -41,7 +41,7 @@ const AdminLogin = () => {
 
         // Cookie management: `refreshToken` is handled by the browser automatically
         // if it's set by the backend with `HttpOnly` flag.
-
+alert("login successful")
         router.push(
           "/about/protected/routes/heggade-vahini/admin-portal/admind"
         );
