@@ -75,7 +75,7 @@ const Trending = () => {
           const imageUrl =
             item.images.length > 0 ? item.images[0].url : "/placeholder.jpg";
           const englishTranslation = item.translations.find(
-            (t) => t.languageCode === "en"
+            (t) => t.languageCode === "kn"
           );
 
           return (

@@ -15,7 +15,7 @@ const TranslationModal: React.FC<Props> = ({
   setFilteredNews,
 }) => {
   const [translation, setTranslation] = useState<Translation>({
-    languageCode: "en",
+    languageCode: "kn",
     title: "",
     content: "",
   });
@@ -96,7 +96,7 @@ const TranslationModal: React.FC<Props> = ({
             })
           }
         >
-          {["en", "kn"].map((lang) => (
+          {["kn", "en"].map((lang) => (
             <option key={lang} value={lang}>
               {lang.toUpperCase()}
             </option>
