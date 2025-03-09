@@ -15,6 +15,7 @@ const Navbar = () => {
       about: "About Us",
       ePaper: "E-Paper",
       latest: "Latest News",
+      videos: "Gallery",
       subscribe: "Subscribe",
       contact: "Contact Us",
     },
@@ -23,6 +24,7 @@ const Navbar = () => {
       about: "ನಮ್ಮ ಬಗ್ಗೆ",
       ePaper: "ಇ-ಪೇಪರ್",
       latest: "ತಾಜಾ ಸುದ್ದಿ",
+      videos: "ಗ್ಯಾಲರಿ",
       subscribe: "ಚಂದಾದಾರರಾಗಿ",
       contact: "ಸಂಪರ್ಕಿಸಿ",
     },
@@ -31,10 +33,11 @@ const Navbar = () => {
   return (
     <>
       {/* Desktop Navbar */}
-      <nav className="hidden md:flex items-center space-x-12 font-bold -ml-36">
+      <nav className="hidden md:flex items-center space-x-12 font-bold -ml-24">
         <Link href="/" className="text-black ml-12 hover:text-[#F48634]">{navItems[language].home}</Link>
         <Link href="/e-paper" className="text-black hover:text-[#F48634]">{navItems[language].ePaper}</Link>
         <Link href="/latest" className="text-black hover:text-[#F48634]">{navItems[language].latest}</Link>
+        <Link href="/videos" className="text-black hover:text-[#F48634]">{navItems[language].videos}</Link>
         <Link href="/subscribe" className="text-black hover:text-[#F48634]">{navItems[language].subscribe}</Link>
         <Link href="/contact" className="text-black hover:text-[#F48634]">{navItems[language].contact}</Link>
         <Link href="/about" className="text-black hover:text-[#F48634]">{navItems[language].about}</Link>
@@ -57,6 +60,7 @@ const Navbar = () => {
           <Link href="/e-paper" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].ePaper}</Link>
           <Link href="/latest" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].latest}</Link>
           <Link href="/subscribe" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].subscribe}</Link>
+          <Link href="/videos" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].videos}</Link>
           <Link href="/contact" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].contact}</Link>
           <Link href="/about" className="text-black hover:text-[#F48634]" onClick={() => setIsOpen(false)}>{navItems[language].about}</Link>
            </nav>
