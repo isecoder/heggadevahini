@@ -23,7 +23,7 @@ const Header = () => {
               className="h-21 w-auto"
             />
           </Link>
-          <div className="w-[2px] bg-[#000000] h-14 -ml-20 hidden md:block"></div>
+          <div className="w-[2px] bg-[#000000] h-14  hidden md:block"></div>
 
           <div className="hidden md:flex">
             <Navbar />
