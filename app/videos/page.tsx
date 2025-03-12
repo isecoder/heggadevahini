@@ -25,13 +25,14 @@ const Page: React.FC = () => {
     const data = fetchdata();
     setVideos(data);
     setLoading(false);
-  }, []);
+    setTimeout(() => {}, 1000);
+  },[] );
 
   return (
     <div>
       {loading && <LoadingSpinner />}
       <h2 className="text-xl font-semibold mt-10 mb-6 p-2">VIDEOS</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 mb-80">
         {videos.map((video, index) => (
           <div key={index} className="w-full h-64">
             <iframe

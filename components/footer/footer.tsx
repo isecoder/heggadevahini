@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Facebook,
@@ -10,8 +11,22 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function SiteFooter() {
+  const router = useRouter();
+  const [clickCount, setClickCount] = useState(0);
+
+  const handleClick = () => {
+    if (clickCount + 1 === 4) {
+      router.push("/about/protected/routes/heggade-vahini/admin-portal/login");
+    }
+    setClickCount((prev) => prev + 1);
+
+    setTimeout(() => setClickCount(0), 2000);
+  };
+
   return (
     <footer className="w-full bg-gradient-to-b from-orange-50 to-orange-100 pt-8">
       <div className="container mx-auto px-4 space-y-12 sm:space-y-16 ">
@@ -104,27 +119,30 @@ export default function SiteFooter() {
             </Link>
             <span className="text-muted-foreground/40 hidden sm:inline">|</span>
             <Link
+              href="/videos"
+              className="hover:text-foreground transition-colors"
+            >
+              Videos
+            </Link>
+            <span className="text-muted-foreground/40 hidden sm:inline">|</span>
+            <Link
               href="/contact"
               className="hover:text-foreground transition-colors"
             >
               Contact Us
             </Link>
-            <span className="text-muted-foreground/40 hidden sm:inline">|</span>
-            <Link
-              href="/about/protected/routes/heggade-vahini/admin-portal/login"
-              className="hover:text-foreground transition-colors"
-            >
-              Admin
-            </Link>
           </div>
         </nav>
         <div className=" border-t border-gray-400"></div>
         {/* Attribution */}
-        <div className="text-center  border-t  border-muted/20">
-          <p className="text-m -mt-11 hover:text-muted-foreground transition-colors text-black">
+        <div className="text-center border-t border-muted/20">
+          <p
+            className="text-m -mt-11 hover:text-muted-foreground transition-colors text-black cursor-pointer"
+            onClick={handleClick}
+          >
             Designed & Developed by{" "}
             <Link
-              className="text-black  hover:text-amber-500"
+              className="text-black hover:text-amber-500"
               href="https://www.instagram.com/isdc.sahyadri/"
             >
               ISDC
