@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   NewsItem,
   Translation,
@@ -9,21 +9,29 @@ interface Props {
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setNews: React.Dispatch<React.SetStateAction<NewsItem[]>>;
   setFilteredNews: React.Dispatch<React.SetStateAction<NewsItem[]>>;
+  existingTranslation: Translation | null;
 }
 
-const TranslationModal: React.FC<Props> = ({
+const UpdateTranslationModal: React.FC<Props> = ({
   selectedNewsId,
   setIsModalOpen,
   setNews,
   setFilteredNews,
+  existingTranslation,
 }) => {
   const [translation, setTranslation] = useState<Translation>({
     languageCode: "kn", // ✅ Always Kannada (kn)
-    title: "",
-    content: "",
+    title: existingTranslation?.title || "",
+    content: existingTranslation?.content || "",
   });
 
-  const handleAddTranslation = async () => {
+  useEffect(() => {
+    if (existingTranslation) {
+      setTranslation(existingTranslation);
+    }
+  }, [existingTranslation]);
+
+  const handleUpdateTranslation = async () => {
     if (!selectedNewsId) return;
 
     const adminToken = sessionStorage.getItem("adminToken");
@@ -34,9 +42,9 @@ const TranslationModal: React.FC<Props> = ({
 
     try {
       const response = await fetch(
-        `/api/v1/news/${selectedNewsId}/translations`,
+        `/api/v1/news/${selectedNewsId}/translations/${translation.languageCode}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${adminToken}`,
@@ -45,17 +53,19 @@ const TranslationModal: React.FC<Props> = ({
         }
       );
 
-      if (!response.ok) throw new Error("Failed to add translation");
+      if (!response.ok) throw new Error("Failed to update translation");
 
-      const newTranslation = await response.json();
-      const addedTranslation: Translation = newTranslation.data;
+      const updatedTranslation = await response.json();
+      const modifiedTranslation: Translation = updatedTranslation.data;
 
       setNews((prevNews) =>
         prevNews.map((item) =>
           item.id === selectedNewsId
             ? {
                 ...item,
-                translations: [...(item.translations || []), addedTranslation],
+                translations: item.translations.map((t) =>
+                  t.languageCode === "kn" ? modifiedTranslation : t
+                ),
               }
             : item
         )
@@ -66,27 +76,27 @@ const TranslationModal: React.FC<Props> = ({
           item.id === selectedNewsId
             ? {
                 ...item,
-                translations: [...(item.translations || []), addedTranslation],
+                translations: item.translations.map((t) =>
+                  t.languageCode === "kn" ? modifiedTranslation : t
+                ),
               }
             : item
         )
       );
 
       setIsModalOpen(false);
-      setTranslation({ languageCode: "kn", title: "", content: "" });
-
-      console.log("Translation added successfully:", addedTranslation);
-      alert("Translation added successfully");
+      console.log("Translation updated successfully:", modifiedTranslation);
+      alert("Translation updated successfully");
     } catch (error) {
-      console.error("Error adding translation:", error);
-      alert("Error adding translation");
+      console.error("Error updating translation:", error);
+      alert("Error updating translation");
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
       <div className="bg-white p-6 rounded-md shadow-lg w-96 max-w-full">
-        <h2 className="text-lg font-semibold">Add Kannada Translation</h2>
+        <h2 className="text-lg font-semibold">Update Kannada Translation</h2>
 
         {/* Title Input */}
         <input
@@ -125,9 +135,9 @@ const TranslationModal: React.FC<Props> = ({
           </button>
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded-md"
-            onClick={handleAddTranslation}
+            onClick={handleUpdateTranslation}
           >
-            Add
+            Update
           </button>
         </div>
       </div>
@@ -135,4 +145,4 @@ const TranslationModal: React.FC<Props> = ({
   );
 };
 
-export default TranslationModal;
+export default UpdateTranslationModal;

@@ -17,13 +17,10 @@ interface Props {
 
 const NewsList: React.FC<Props> = ({
   news,
-  tags,
   setNews,
   setFilteredNews,
   setSelectedNewsId,
   setIsModalOpen,
-  selectedTag,
-  setSelectedTag,
 }) => {
   return (
     <div className="mt-4 space-y-4 px-4">
@@ -32,13 +29,10 @@ const NewsList: React.FC<Props> = ({
           <NewsItem
             key={item.id}
             item={item}
-            tags={tags}
             setNews={setNews}
             setFilteredNews={setFilteredNews}
             setSelectedNewsId={setSelectedNewsId}
             setIsModalOpen={setIsModalOpen}
-            selectedTag={selectedTag}
-            setSelectedTag={setSelectedTag}
           />
         ))
       ) : (

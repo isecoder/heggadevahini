@@ -1,36 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import TagDropdown from "@/components/admin/TagDropdown";
 import ImageUploader from "@/components/admin/ImageUploader";
+import UpdateTranslationModal from "@/components/admin/UpdateTranslationModal";
 import {
   NewsItem as NewsItemType,
-  Tag,
+  Translation,
 } from "@/app/about/protected/routes/heggade-vahini/admin-portal/admind/news/types/news";
 
 interface Props {
   item: NewsItemType;
-  tags: Tag[];
   setNews: React.Dispatch<React.SetStateAction<NewsItemType[]>>;
   setFilteredNews: React.Dispatch<React.SetStateAction<NewsItemType[]>>;
   setSelectedNewsId: React.Dispatch<React.SetStateAction<number | null>>;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedTag: { [key: number]: number };
-  setSelectedTag: React.Dispatch<
-    React.SetStateAction<{ [key: number]: number }>
-  >;
 }
 
 const NewsItem: React.FC<Props> = ({
   item,
-  tags,
   setNews,
   setFilteredNews,
   setSelectedNewsId,
   setIsModalOpen,
-  selectedTag,
-  setSelectedTag,
 }) => {
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const adminToken = sessionStorage.getItem("adminToken") || "";
+
+  const existingTranslation: Translation | null =
+    item.translations?.find((t) => t.languageCode === "kn") || null;
 
   const handleDeleteNews = async () => {
     if (!adminToken) {
@@ -49,7 +45,6 @@ const NewsItem: React.FC<Props> = ({
               Authorization: `Bearer ${adminToken}`,
             },
             body: JSON.stringify({
-              id: item.id,
               languageCode: translation.languageCode,
             }),
           }
@@ -59,6 +54,7 @@ const NewsItem: React.FC<Props> = ({
           console.error(
             `Failed to delete translation ${translation.languageCode} for news ${item.id}`
           );
+          console.log(response);
         }
       }
 
@@ -107,50 +103,14 @@ const NewsItem: React.FC<Props> = ({
     }
   };
 
-  const handleAddTag = async () => {
-    if (!adminToken) {
-      console.error("No admin token found");
-      return;
-    }
-
-    const tagId = selectedTag[item.id];
-    if (!tagId) {
-      console.error("No tag selected");
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/v1/news/${item.id}/tags`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${adminToken}`,
-        },
-        body: JSON.stringify({ tagId }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to add tag");
-      }
-
-      console.log("Tag added successfully");
-    } catch (error) {
-      console.error("Error adding tag:", error);
-    }
-  };
-
   return (
     <div className="p-4 bg-white shadow-md rounded-md relative cursor-pointer">
-  <h3 className="text-lg font-semibold">
-    {item.translations?.find((t) => t.languageCode === (item.id === 15 ? "en" : "kn"))?.title ||
-      "No Title Available"}
-  </h3>
-  <p className="text-gray-700">
-    {item.translations?.find((t) => t.languageCode === (item.id === 15 ? "en" : "kn"))?.content ||
-      "No Content Available"}
-  </p>
-
-
+      <h3 className="text-lg font-semibold">
+        {existingTranslation?.title || "No Title Available"}
+      </h3>
+      <p className="text-gray-700">
+        {existingTranslation?.content || "No Content Available"}
+      </p>
 
       {(item.images ?? []).length > 0 && (
         <div className="flex gap-2 mt-2">
@@ -167,36 +127,30 @@ const NewsItem: React.FC<Props> = ({
         </div>
       )}
 
-      <TagDropdown
-        newsId={item.id}
-        tags={tags}
-        selectedTag={selectedTag}
-        setSelectedTag={setSelectedTag}
-        adminToken={adminToken}
-      />
-
-      <button
-        className="bg-green-500 text-white px-3 py-1 rounded-md text-sm mt-2"
-        onClick={handleAddTag}
-      >
-        Add Tag
-      </button>
-
       <ImageUploader
         newsId={item.id}
         setNews={setNews}
         setFilteredNews={setFilteredNews}
       />
 
-      <button
-        className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm mt-2"
-        onClick={() => {
-          setSelectedNewsId(item.id);
-          setIsModalOpen(true);
-        }}
-      >
-        Add Translation
-      </button>
+      {existingTranslation ? (
+        <button
+          className="bg-yellow-500 text-white px-3 py-1 rounded-md text-sm mt-2"
+          onClick={() => setIsUpdateModalOpen(true)}
+        >
+          Update Translation
+        </button>
+      ) : (
+        <button
+          className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm mt-2"
+          onClick={() => {
+            setSelectedNewsId(item.id);
+            setIsModalOpen(true);
+          }}
+        >
+          Add Translation
+        </button>
+      )}
 
       <button
         className="bg-red-500 text-white px-3 py-1 rounded-md text-sm mt-2"
@@ -204,6 +158,16 @@ const NewsItem: React.FC<Props> = ({
       >
         Delete News
       </button>
+
+      {isUpdateModalOpen && (
+        <UpdateTranslationModal
+          selectedNewsId={item.id}
+          setIsModalOpen={setIsUpdateModalOpen}
+          setNews={setNews}
+          setFilteredNews={setFilteredNews}
+          existingTranslation={existingTranslation}
+        />
+      )}
     </div>
   );
 };
