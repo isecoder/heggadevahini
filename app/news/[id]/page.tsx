@@ -150,7 +150,7 @@ export default function NewsDetails() {
             content={
               mainImage.startsWith("http")
                 ? mainImage
-                : `https://jviopmgisqfvtdwrpqxe.supabase.co/storage/v1/object/public${mainImage}`
+                : `https://yourwebsite.com${mainImage}`
             }
           />
         )}
