@@ -66,7 +66,13 @@ export default function NewsDetails() {
       if (!articleRef.current) return;
       const { top, height } = articleRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const progress = Math.max(0, Math.min(100, ((viewportHeight - top) / (height + viewportHeight)) * 100));
+      const progress = Math.max(
+        0,
+        Math.min(
+          100,
+          ((viewportHeight - top) / (height + viewportHeight)) * 100
+        )
+      );
       setReadingProgress(progress);
     };
 
@@ -85,7 +91,7 @@ export default function NewsDetails() {
   const title = englishTranslation?.title || "No Title";
   const content = englishTranslation?.content || "No content available.";
   const mainImage = news?.images.length ? news.images[0].url : null;
-  
+
   const formattedDate = useMemo(() => {
     if (!news?.createdAt) return "";
     return new Date(news.createdAt).toLocaleDateString("kn-IN", {
@@ -95,7 +101,10 @@ export default function NewsDetails() {
     });
   }, [news]);
 
-  const readingTime = useMemo(() => Math.max(1, Math.ceil(content.split(/\s+/).length / 200)), [content]);
+  const readingTime = useMemo(
+    () => Math.max(1, Math.ceil(content.split(/\s+/).length / 200)),
+    [content]
+  );
 
   const handleShare = async () => {
     try {
@@ -111,7 +120,6 @@ export default function NewsDetails() {
       }
     } catch (error) {
       console.log("Error sharing:", error);
-     
     }
   };
 
@@ -126,18 +134,38 @@ export default function NewsDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-white px-4 sm:px-6 lg:px-8 py-8" ref={articleRef}>
+    <div
+      className="min-h-screen bg-white px-4 sm:px-6 lg:px-8 py-8"
+      ref={articleRef}
+    >
       <Head>
         <meta property="og:title" content={title} />
-        <meta property="og:description" content={content.substring(0, 150) + "..."} />
-        {mainImage && <meta property="og:image" content={mainImage.startsWith("http") ? mainImage : `https://yourwebsite.com${mainImage}`} />}
+        <meta
+          property="og:description"
+          content={content.substring(0, 150) + "..."}
+        />
+        {mainImage && (
+          <meta
+            property="og:image"
+            content={
+              mainImage.startsWith("http")
+                ? mainImage
+                : `https://jviopmgisqfvtdwrpqxe.supabase.co/storage/v1/object/public${mainImage}`
+            }
+          />
+        )}
         <meta property="og:url" content={currentUrl} />
         <meta property="og:type" content="article" />
       </Head>
 
-      <div className="fixed top-0 left-0 h-1 bg-orange-500 z-50 transition-all duration-300 ease-out" style={{ width: `${readingProgress}%` }} />
+      <div
+        className="fixed top-0 left-0 h-1 bg-orange-500 z-50 transition-all duration-300 ease-out"
+        style={{ width: `${readingProgress}%` }}
+      />
 
-      <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{title}</h1>
+      <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        {title}
+      </h1>
 
       <div className="flex items-center gap-4 text-gray-600 text-sm mb-4">
         <Calendar className="h-4 w-4" /> {formattedDate}
@@ -146,7 +174,14 @@ export default function NewsDetails() {
 
       {mainImage && (
         <div className="w-full mb-6">
-          <Image src={mainImage} alt={title} width={800} height={500} className="w-full h-auto rounded-lg shadow-md" loading="lazy" />
+          <Image
+            src={mainImage}
+            alt={title}
+            width={800}
+            height={500}
+            className="w-full h-auto rounded-lg shadow-md"
+            loading="lazy"
+          />
         </div>
       )}
 
@@ -154,7 +189,10 @@ export default function NewsDetails() {
         <div className="flex flex-wrap items-center gap-2 mb-6">
           <Tag className="h-4 w-4 text-orange-500" />
           {news.tags.map((tag, index) => (
-            <span key={index} className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
+            <span
+              key={index}
+              className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium"
+            >
               {tag}
             </span>
           ))}
@@ -163,24 +201,32 @@ export default function NewsDetails() {
 
       <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
         {content.split("\n").map((paragraph, idx) => (
-          <p key={idx} className={idx === 0 ? "text-xl font-medium text-gray-800" : ""}>
+          <p
+            key={idx}
+            className={idx === 0 ? "text-xl font-medium text-gray-800" : ""}
+          >
             {paragraph}
           </p>
         ))}
       </div>
 
       <div className="mt-8 flex justify-between">
-  <Link href="/latest" className="inline-flex items-center px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800">
-    <ArrowLeft className="mr-2 h-4 w-4" />
-    Back to News
-  </Link>
+        <Link
+          href="/latest"
+          className="inline-flex items-center px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to News
+        </Link>
 
-  <button onClick={handleShare} className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
-    <Share2 className="mr-2 h-4 w-4" />
-    Share Article
-  </button>
-</div>
-
+        <button
+          onClick={handleShare}
+          className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+        >
+          <Share2 className="mr-2 h-4 w-4" />
+          Share Article
+        </button>
+      </div>
     </div>
   );
 }
