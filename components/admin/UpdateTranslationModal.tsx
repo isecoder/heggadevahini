@@ -27,7 +27,11 @@ const UpdateTranslationModal: React.FC<Props> = ({
 
   useEffect(() => {
     if (existingTranslation) {
-      setTranslation(existingTranslation);
+      setTranslation({
+        languageCode: "kn", // ✅ Ensure Kannada
+        title: existingTranslation.title || "",
+        content: existingTranslation.content || "",
+      });
     }
   }, [existingTranslation]);
 
@@ -42,7 +46,7 @@ const UpdateTranslationModal: React.FC<Props> = ({
 
     try {
       const response = await fetch(
-        `/api/v1/news/${selectedNewsId}/translations/${translation.languageCode}`,
+        `/api/v1/news/${selectedNewsId}/translations`,
         {
           method: "PUT",
           headers: {
@@ -55,41 +59,38 @@ const UpdateTranslationModal: React.FC<Props> = ({
 
       if (!response.ok) throw new Error("Failed to update translation");
 
-      const updatedTranslation = await response.json();
-      const modifiedTranslation: Translation = updatedTranslation.data;
+      // ✅ Fetch the updated news data from the API
+      const updatedNewsResponse = await fetch(`/api/v1/news/${selectedNewsId}`);
+      if (!updatedNewsResponse.ok)
+        throw new Error("Failed to fetch updated news");
 
+      const updatedNews: NewsItem = await updatedNewsResponse.json();
+
+      console.log("Updated News Item:", updatedNews);
+
+      // ✅ Ensure React properly updates the state with new references
       setNews((prevNews) =>
         prevNews.map((item) =>
-          item.id === selectedNewsId
-            ? {
-                ...item,
-                translations: item.translations.map((t) =>
-                  t.languageCode === "kn" ? modifiedTranslation : t
-                ),
-              }
-            : item
+          item.id === selectedNewsId ? updatedNews : item
         )
       );
-
       setFilteredNews((prevNews) =>
         prevNews.map((item) =>
-          item.id === selectedNewsId
-            ? {
-                ...item,
-                translations: item.translations.map((t) =>
-                  t.languageCode === "kn" ? modifiedTranslation : t
-                ),
-              }
-            : item
+          item.id === selectedNewsId ? updatedNews : item
         )
       );
 
       setIsModalOpen(false);
-      console.log("Translation updated successfully:", modifiedTranslation);
-      alert("Translation updated successfully");
+      console.log("Translation updated successfully:", updatedNews);
+      alert("Translation updated successfully ✅");
+
+      // ✅ Forcefully reload the page after a short delay (for smooth UX)
+      setTimeout(() => {
+        window.location.reload();
+      }, 500); // Delay refresh for better user experience
     } catch (error) {
       console.error("Error updating translation:", error);
-      alert("Error updating translation");
+      alert("Error updating translation ❌");
     }
   };
 

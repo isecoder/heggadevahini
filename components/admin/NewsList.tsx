@@ -1,6 +1,9 @@
 import React from "react";
 import NewsItem from "./NewsItem";
-import { NewsItem as NewsItemType, Tag } from "@/app/about/protected/routes/heggade-vahini/admin-portal/admind/news/types/news";
+import {
+  NewsItem as NewsItemType,
+  Tag,
+} from "@/app/about/protected/routes/heggade-vahini/admin-portal/admind/news/types/news";
 
 interface Props {
   news: NewsItemType[];
@@ -25,16 +28,21 @@ const NewsList: React.FC<Props> = ({
   return (
     <div className="mt-4 space-y-4 px-4">
       {news.length > 0 ? (
-        news.map((item) => (
-          <NewsItem
-            key={item.id}
-            item={item}
-            setNews={setNews}
-            setFilteredNews={setFilteredNews}
-            setSelectedNewsId={setSelectedNewsId}
-            setIsModalOpen={setIsModalOpen}
-          />
-        ))
+        news.map((item) => {
+          if (!item.id) {
+            console.warn("⚠️ News item missing id:", item);
+          }
+          return (
+            <NewsItem
+              key={item.id} // ✅ Ensure unique key
+              item={item}
+              setNews={setNews}
+              setFilteredNews={setFilteredNews}
+              setSelectedNewsId={setSelectedNewsId}
+              setIsModalOpen={setIsModalOpen}
+            />
+          );
+        })
       ) : (
         <p className="text-center mt-4 text-gray-500">No news available</p>
       )}
