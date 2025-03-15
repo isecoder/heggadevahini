@@ -34,7 +34,7 @@ const Latest = () => {
         if (data.success && data.data.length > 0) {
           // ✅ Filter only published news and sort by createdAt (latest first)
           const latestNews = data.data
-            .filter((news: NewsItem) => news.published)
+            .filter((news: NewsItem) => news.published===true)
             .sort(
               (a: NewsItem, b: NewsItem) =>
                 new Date(b.createdAt).getTime() -

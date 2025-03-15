@@ -32,7 +32,7 @@ const Trending = () => {
           throw new Error("Invalid response");
 
         const trendingNews = data.data
-        //.filter((item: NewsItem) => item.published === false)
+        .filter((item: NewsItem) => item.published === true)
           .sort(
             (a: NewsItem, b: NewsItem) =>
               new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
