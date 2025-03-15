@@ -126,7 +126,7 @@ const NewsItem: React.FC<Props> = ({ item, setFilteredNews }) => {
           className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm"
           onClick={() => setIsModalOpen(true)}
         >
-          Edit Translations
+          Edit
         </button>
         <button
           className={`px-3 py-1 rounded-md text-sm ${
