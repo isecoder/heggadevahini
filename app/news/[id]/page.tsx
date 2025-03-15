@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Calendar, Clock, Tag, Share2 } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Share2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
@@ -15,10 +15,7 @@ interface News {
   content: string;
   createdAt: string;
   updatedAt: string;
-  image: string;
   images: { url: string }[];
-  translations: { languageCode: string; title: string; content: string }[];
-  tags: string[];
 }
 
 export default function NewsDetails() {
@@ -30,7 +27,7 @@ export default function NewsDetails() {
   const [currentUrl, setCurrentUrl] = useState("");
   const articleRef = useRef<HTMLDivElement>(null);
 
-  // Fallback default image if no article image exists
+  // Default fallback image
   const defaultImage =
     "https://jviopmgisqfvtdwrpqxe.supabase.co/storage/v1/object/public/epapers/images%2F1740838660823_Screenshot_20250301_194624.png";
 
@@ -84,22 +81,9 @@ export default function NewsDetails() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const englishTranslation = useMemo(
-    () =>
-      news?.translations.find((t) => t.languageCode === "en") ||
-      news?.translations.find((t) => t.languageCode === "kn") ||
-      null,
-    [news]
-  );
-
-  const title = englishTranslation?.title || "No Title";
-  const content = englishTranslation?.content || "No content available.";
-  const mainImage = news?.images.length ? news.images[0].url : defaultImage; // Fallback to default image if none exists
-
-  // Debugging the image URL
-  useEffect(() => {
-    console.log("Main Image URL:", mainImage); // Log the image URL to debug
-  }, [mainImage]);
+  const title = news?.title || "No Title";
+  const content = news?.content || "No content available.";
+  const mainImage = news?.images.length ? news.images[0].url : defaultImage;
 
   const formattedDate = useMemo(() => {
     if (!news?.createdAt) return "";
@@ -117,19 +101,14 @@ export default function NewsDetails() {
 
   const handleShare = async () => {
     try {
-      const message = `Check out this article: ${title}\n${content.substring(
-        0,
-        1
-      )}...\nRead more here: ${currentUrl}`;
+      const message = `Check out this article: ${title}\nRead more here: ${currentUrl}`;
       if (navigator.share) {
-        // Share without URL
         await navigator.share({
           title,
           text: message,
           url: currentUrl,
         });
       } else {
-        // Fallback for browsers that don't support navigator.share
         navigator.clipboard.writeText(message);
         alert("Article details and URL copied to clipboard!");
       }
@@ -159,8 +138,7 @@ export default function NewsDetails() {
           property="og:description"
           content={content.substring(0, 150) + "..."}
         />
-        <meta property="og:image" content={mainImage} />{" "}
-        {/* Ensure the image is logged and set correctly */}
+        <meta property="og:image" content={mainImage} />
         <meta property="og:url" content={currentUrl} />
         <meta property="og:type" content="article" />
       </Head>
@@ -188,21 +166,8 @@ export default function NewsDetails() {
             height={500}
             className="w-full h-auto rounded-lg shadow-md"
             loading="lazy"
+            unoptimized
           />
-        </div>
-      )}
-
-      {news.tags.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 mb-6">
-          <Tag className="h-4 w-4 text-orange-500" />
-          {news.tags.map((tag, index) => (
-            <span
-              key={index}
-              className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium"
-            >
-              {tag}
-            </span>
-          ))}
         </div>
       )}
 
