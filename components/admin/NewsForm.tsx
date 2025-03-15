@@ -1,13 +1,16 @@
 import { useState } from "react";
 
-const NewsForm = ({ onClose, onSubmit = () => window.location.reload() }: { onClose: () => void; onSubmit?: () => void }) => {
+type NewsFormProps = {
+  onClose: () => void;
+  onSubmit?: () => void;
+};
+
+const NewsForm = ({ onClose, onSubmit = () => (window.location.href = window.location.href) }: NewsFormProps) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  
   const [published, setPublished] = useState(false);
   const [loading, setLoading] = useState(false);
- 
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -19,8 +22,6 @@ const NewsForm = ({ onClose, onSubmit = () => window.location.reload() }: { onCl
     }
 
     try {
-    
-
       const adminToken = sessionStorage.getItem("adminToken");
       if (!adminToken) {
         alert("Admin authentication required.");
@@ -36,15 +37,12 @@ const NewsForm = ({ onClose, onSubmit = () => window.location.reload() }: { onCl
         },
         body: JSON.stringify({ title, content, published }),
       });
-      
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to add news");
 
-      setNewsId(data.id); // Store the news ID for image upload
-     
-     alert("News added successfully");
-      onSubmit();
+      alert("News added successfully");
+      onSubmit(); // Triggers reload
       onClose();
     } catch (error) {
       console.error("Error adding news:", error);
@@ -73,8 +71,6 @@ const NewsForm = ({ onClose, onSubmit = () => window.location.reload() }: { onCl
         required
       />
 
-    
-
       <label className="flex items-center space-x-2">
         <input
           type="checkbox"
@@ -93,8 +89,6 @@ const NewsForm = ({ onClose, onSubmit = () => window.location.reload() }: { onCl
           {loading ? "Submitting..." : "Submit"}
         </button>
       </div>
-
-      
     </form>
   );
 };
