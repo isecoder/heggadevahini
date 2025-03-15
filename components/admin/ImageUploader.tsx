@@ -79,16 +79,16 @@ const ImageUploader: React.FC<Props> = ({
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
       <input
         type="file"
         accept="image/*"
         onChange={handleFileChange}
-        className="border p-1 rounded-md"
+        className="border p-2 rounded-md w-full sm:w-auto text-sm"
       />
       <button
         onClick={handleUpload}
-        className="bg-green-500 text-white px-3 py-1 rounded-md text-sm"
+        className="bg-green-500 text-white px-4 py-2 rounded-md text-sm w-full sm:w-auto"
       >
         Upload
       </button>
