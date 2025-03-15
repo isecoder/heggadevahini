@@ -28,7 +28,9 @@ const NewsList: React.FC<Props> = ({
   return (
     <div className="mt-4 space-y-4 px-4">
       {news.length > 0 ? (
-        news.map((item) => {
+        [...news]
+         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .map((item) => {
           if (!item.id) {
             console.warn("⚠️ News item missing id:", item);
           }
