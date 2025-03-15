@@ -28,8 +28,6 @@ const LatestNews = () => {
       if (!res.ok) throw new Error("Failed to fetch news");
 
       const data = await res.json();
-
-      // Sort news by updatedAt without filtering by tags
       const sortedNews = data.data.sort(
         (a: NewsItem, b: NewsItem) =>
           new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
@@ -62,11 +60,16 @@ const LatestNews = () => {
           {news.map((item) => {
             const imageUrl =
               item.images.length > 0 ? item.images[0].url : "/placeholder.jpg";
+            const knTranslation = item.translations?.find(
+              (t) => t.languageCode === "kn"
+            );
+            const defaultTranslation = item.translations?.[0];
+
             return (
               <div key={item.id} className="bg-white p-4 rounded-lg shadow-lg">
                 <Image
                   src={imageUrl}
-                  alt={item.translations?.[0]?.title || "News Image"}
+                  alt={knTranslation?.title || defaultTranslation?.title || "News Image"}
                   width={400}
                   height={250}
                   className="rounded-md"
@@ -75,10 +78,11 @@ const LatestNews = () => {
                   onClick={() => router.push(`/news/${item.id}`)}
                   className="text-xl font-semibold mt-3 cursor-pointer hover:underline"
                 >
-                  {item.translations?.[0]?.title || "Untitled News"}
+                  {knTranslation?.title || defaultTranslation?.title || "Untitled News"}
                 </h2>
                 <p className="text-gray-700 mt-2">
-                  {item.translations?.[0]?.content.slice(0, 150) ||
+                  {knTranslation?.content?.slice(0, 150) ||
+                    defaultTranslation?.content?.slice(0, 150) ||
                     "No description available."}
                 </p>
                 <p className="text-sm text-gray-500 mt-2">
