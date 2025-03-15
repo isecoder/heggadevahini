@@ -37,7 +37,7 @@ const Trending = () => {
 
         // ✅ Filter trending news & sort by updatedAt (latest first)
         const trendingNews = data.data
-          .filter((item: NewsItem) => item.tags.includes("Trending"))
+         // .filter((item: NewsItem) => item.tags.includes("Trending"))
           .sort(
             (a: NewsItem, b: NewsItem) =>
               new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
