@@ -2,28 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight  } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
-const API_BASE_URL = "/api/v1/news"; // ✅ Correct API URL
+const API_BASE_URL = "/api/v1/news";
 
-// Define NewsItem interface
 interface NewsItem {
   id: number;
+  title: string;
+  content: string;
   createdAt: string;
   updatedAt: string;
-  tags: string[];
+  published: boolean;
   images: { id: number; url: string }[];
-  translations: {
-    id: number;
-    languageCode: string;
-    title: string;
-    content: string;
-  }[];
 }
 
 const Latest = () => {
-  const [newsList, setNewsList] = useState<NewsItem[]>([]); // Type the newsList as NewsItem[]
+  const [newsList, setNewsList] = useState<NewsItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -37,8 +32,9 @@ const Latest = () => {
 
         const data = await response.json();
         if (data.success && data.data.length > 0) {
+          // ✅ Filter only published news and sort by createdAt (latest first)
           const latestNews = data.data
-          //  .filter((news: NewsItem) => news.tags.includes("Latest")) // Type 'news' as NewsItem
+            .filter((news: NewsItem) => news.published)
             .sort(
               (a: NewsItem, b: NewsItem) =>
                 new Date(b.createdAt).getTime() -
@@ -46,18 +42,12 @@ const Latest = () => {
             )
             .slice(0, 3);
 
-          if (latestNews.length === 0)
-            throw new Error("No 'Latest' news available.");
-
           setNewsList(latestNews);
         } else {
           throw new Error("No news available.");
         }
-      } catch (err: unknown) {
-        // Cast 'err' to Error type
-        if (err instanceof Error) {
-          setError(err.message);
-        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred.");
       } finally {
         setLoading(false);
       }
@@ -93,10 +83,11 @@ const Latest = () => {
             src={
               news.images.length > 0 ? news.images[0].url : "/placeholder.svg"
             }
-            alt={news.translations[0]?.title || "News Image"}
+            alt={news.title || "News Image"}
             layout="fill"
             objectFit="cover"
             className="rounded-lg"
+            unoptimized
           />
 
           {/* Prev/Next Buttons */}
@@ -113,17 +104,9 @@ const Latest = () => {
             <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
 
-          {/* Play Button */}
-          {/* <button
-            onClick={() => router.push(`/news/${news.id}`)}
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 bg-white/80 rounded-full flex items-center justify-center hover:bg-white"
-          >
-            <Play className="h-6 w-6 sm:h-8 sm:w-8 ml-1" />
-          </button> */}
-
           {/* Read Time Label */}
           <div className="absolute top-3 right-3 bg-white/80 px-2 py-1 rounded text-xs sm:text-sm">
-            {Math.ceil(news.translations[0]?.content.length / 500)} mins read
+            {Math.ceil(news.content.length / 500)} mins read
           </div>
         </div>
 
@@ -132,30 +115,11 @@ const Latest = () => {
           onClick={() => router.push(`/news/${news.id}`)}
           className="text-lg sm:text-2xl font-bold mt-3 cursor-pointer hover:underline"
         >
-          {news.translations[0]?.title || "No Title"}
+          {news.title || "No Title"}
         </h2>
         <p className="text-gray-600 text-sm sm:text-base mt-2">
-          {news.translations[0]?.content.slice(0, 150)}...
+          {news.content.slice(0, 150)}...
         </p>
-
-        {/* Tags */}
-        <div className="mt-3 flex flex-wrap gap-2">
-          {news.tags
-            .filter((tag: string) => tag === "Latest") // Define type for 'tag' as string
-            .map(
-              (
-                tag: string,
-                index: number // Define type for 'index' as number
-              ) => (
-                <span
-                  key={index}
-                  className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm cursor-pointer"
-                >
-                  {tag}
-                </span>
-              )
-            )}
-        </div>
       </div>
     </section>
   );
