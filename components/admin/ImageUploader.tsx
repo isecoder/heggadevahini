@@ -1,21 +1,19 @@
 import React, { useState } from "react";
-import { NewsItem, ImageItem } from "@/app/about/protected/routes/heggade-vahini/admin-portal/admind/news/types/news";
+import {
+  NewsItem,
+  ImageItem,
+} from "@/app/about/protected/routes/heggade-vahini/admin-portal/admind/news/types/news";
 import { useRouter } from "next/navigation";
+
 interface Props {
   newsId: number;
-  setNews: React.Dispatch<React.SetStateAction<NewsItem[]>>;
   setFilteredNews: React.Dispatch<React.SetStateAction<NewsItem[]>>;
 }
 
-const ImageUploader: React.FC<Props> = ({
-  newsId,
-  setNews,
-  setFilteredNews,
-}) => {
+const ImageUploader: React.FC<Props> = ({ newsId, setFilteredNews }) => {
   const [file, setFile] = useState<File | null>(null);
-  
   const router = useRouter();
-  
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const sanitizedFile = new File(
@@ -55,14 +53,6 @@ const ImageUploader: React.FC<Props> = ({
 
       const data = await response.json();
       const newImage: ImageItem = data.data;
-
-      setNews((prevNews) =>
-        prevNews.map((item) =>
-          item.id === newsId
-            ? { ...item, images: [...item.images, newImage] }
-            : item
-        )
-      );
 
       setFilteredNews((prevNews) =>
         prevNews.map((item) =>
