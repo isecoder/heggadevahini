@@ -32,7 +32,7 @@ const Trending = () => {
           throw new Error("Invalid response");
 
         const trendingNews = data.data
-          // .filter((item: NewsItem) => item.tags.includes("Trending"))
+        //.filter((item: NewsItem) => item.published === false)
           .sort(
             (a: NewsItem, b: NewsItem) =>
               new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
@@ -54,7 +54,7 @@ const Trending = () => {
   return (
     <section className="p-4 sm:p-6 bg-gray-100 w-full sm:max-w-3xl mx-auto">
       <h2 className="text-xl font-semibold flex justify-between items-center">
-        Trending News
+        Latest News
         <Link href="/trending" className="text-[#F48634] text-sm">
           View all →
         </Link>

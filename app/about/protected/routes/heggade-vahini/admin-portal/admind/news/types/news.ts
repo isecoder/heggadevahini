@@ -1,19 +1,20 @@
-export interface Translation {
-  languageCode: string;
-  title: string;
-  content: string;
-}
+
 
 export interface ImageItem {
-  id: string;
+  id: number;
   url: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface NewsItem {
   id: number;
-  translations: Translation[];
+  title: string;
+  content: string;
+  published: boolean;
+  createdAt: string;
+  updatedAt: string;
   images: ImageItem[];
-  tags: string[];
 }
 
 export interface Tag {
