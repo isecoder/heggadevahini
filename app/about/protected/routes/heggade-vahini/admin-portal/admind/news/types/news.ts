@@ -1,5 +1,3 @@
-
-
 export interface ImageItem {
   id: number;
   url: string;
@@ -15,9 +13,4 @@ export interface NewsItem {
   createdAt: string;
   updatedAt: string;
   images: ImageItem[];
-}
-
-export interface Tag {
-  id: number;
-  name: string;
 }

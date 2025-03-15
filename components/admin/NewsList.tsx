@@ -1,22 +1,14 @@
 import React from "react";
 import NewsItem from "./NewsItem";
-import {
-  NewsItem as NewsItemType,
-  Tag,
-} from "@/app/about/protected/routes/heggade-vahini/admin-portal/admind/news/types/news";
+import { NewsItem as NewsItemType } from "@/app/about/protected/routes/heggade-vahini/admin-portal/admind/news/types/news";
 
-interface Props {
+type Props = {
   news: NewsItemType[];
-  tags: Tag[];
-  setNews: React.Dispatch<React.SetStateAction<NewsItemType[]>>;
   setFilteredNews: React.Dispatch<React.SetStateAction<NewsItemType[]>>;
+  setNews: React.Dispatch<React.SetStateAction<NewsItemType[]>>;
   setSelectedNewsId: React.Dispatch<React.SetStateAction<number | null>>;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedTag: { [key: number]: number };
-  setSelectedTag: React.Dispatch<
-    React.SetStateAction<{ [key: number]: number }>
-  >;
-}
+};
 
 const NewsList: React.FC<Props> = ({
   news,
@@ -34,7 +26,7 @@ const NewsList: React.FC<Props> = ({
           }
           return (
             <NewsItem
-              key={item.id} // ✅ Ensure unique key
+              key={item.id}
               item={item}
               setNews={setNews}
               setFilteredNews={setFilteredNews}

@@ -139,11 +139,13 @@ import Image from "next/image";
 import ImageUploader from "@/components/admin/ImageUploader";
 import { NewsItem as NewsItemType } from "@/app/about/protected/routes/heggade-vahini/admin-portal/admind/news/types/news";
 
-interface Props {
+type Props = {
   item: NewsItemType;
   setNews: React.Dispatch<React.SetStateAction<NewsItemType[]>>;
   setFilteredNews: React.Dispatch<React.SetStateAction<NewsItemType[]>>;
-}
+  setSelectedNewsId: React.Dispatch<React.SetStateAction<number | null>>;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 const NewsItem: React.FC<Props> = ({ item, setNews, setFilteredNews }) => {
   const adminToken = sessionStorage.getItem("adminToken") || "";

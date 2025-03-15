@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { NewsItem as NewsItemType } from "@/app/about/protected/routes/heggade-vahini/admin-portal/admind/news/types/news";
 
 type NewsFormProps = {
   onClose: () => void;
   onSubmit?: () => void;
+  setFilteredNews: React.Dispatch<React.SetStateAction<NewsItemType[]>>;
 };
 
-const NewsForm = ({ onClose, onSubmit = () => (window.location.href = window.location.href) }: NewsFormProps) => {
+const NewsForm = ({ onClose, onSubmit = () => (window.location.href = window.location.href), setFilteredNews }: NewsFormProps) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [published, setPublished] = useState(false);
@@ -42,6 +44,10 @@ const NewsForm = ({ onClose, onSubmit = () => (window.location.href = window.loc
       if (!response.ok) throw new Error(data.message || "Failed to add news");
 
       alert("News added successfully");
+
+      // Update the news list after adding new news
+      setFilteredNews((prevNews) => [...prevNews, data.data]);
+
       onSubmit(); // Triggers reload
       onClose();
     } catch (error) {
