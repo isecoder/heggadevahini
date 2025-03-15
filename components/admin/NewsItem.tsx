@@ -177,7 +177,39 @@ const NewsItem: React.FC<Props> = ({ item, setNews, setFilteredNews }) => {
       alert("Failed to update translations");
     }
   };
-
+  const handleDeleteNews = async () => {
+        if (!adminToken) {
+          console.error("No admin token found");
+          return;
+        }
+    
+        try {
+          for (const image of item.images) {
+            await fetch(`/api/v1/news/${item.id}/images/${image.id}`, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${adminToken}`,
+              },
+            });
+          }
+    
+          const deleteResponse = await fetch(`/api/v1/news/${item.id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${adminToken}` },
+          });
+    
+          if (!deleteResponse.ok) throw new Error("Failed to delete news");
+    
+          setNews((prevNews) => prevNews.filter((news) => news.id !== item.id));
+          setFilteredNews((prevNews) => prevNews.filter((news) => news.id !== item.id));
+    
+          alert("News deleted successfully");
+        } catch (error) {
+          console.error("Error deleting news:", error);
+          alert("Failed to delete news");
+        }
+      };
   const handleTogglePublish = async () => {
     try {
       const response = await fetch(`/api/v1/news/${item.id}`, {
@@ -224,11 +256,11 @@ const NewsItem: React.FC<Props> = ({ item, setNews, setFilteredNews }) => {
         >
           {isPublished ? "Unpublish" : "Publish"}
         </button>
-        <button className="bg-red-500 text-white px-3 py-1 rounded-md text-sm">Delete</button>
+        <button className="bg-red-500 text-white px-3 py-1 rounded-md text-sm" onClick={handleDeleteNews}>Delete</button>
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-5 rounded-md shadow-lg w-96">
             <h2 className="text-lg font-semibold mb-3">Edit News</h2>
 
@@ -237,14 +269,14 @@ const NewsItem: React.FC<Props> = ({ item, setNews, setFilteredNews }) => {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="border border-gray-300 rounded-md p-1 w-full mb-3"
+              className="border border-gray-300 rounded-md p-3 w-full mb-3"
             />
 
             <label className="text-sm font-medium">Content:</label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="border border-gray-300 rounded-md p-1 w-full"
+              className="border border-gray-300 rounded-md p-6 w-full"
             />
 
             <div className="mt-4 flex justify-end gap-2">
