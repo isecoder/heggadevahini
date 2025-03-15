@@ -38,7 +38,7 @@ const Latest = () => {
         const data = await response.json();
         if (data.success && data.data.length > 0) {
           const latestNews = data.data
-            .filter((news: NewsItem) => news.tags.includes("Latest")) // Type 'news' as NewsItem
+          //  .filter((news: NewsItem) => news.tags.includes("Latest")) // Type 'news' as NewsItem
             .sort(
               (a: NewsItem, b: NewsItem) =>
                 new Date(b.createdAt).getTime() -

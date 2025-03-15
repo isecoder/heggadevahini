@@ -16,7 +16,12 @@ const ImageUploader: React.FC<Props> = ({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      setFile(event.target.files[0]);
+      const sanitizedFile = new File(
+        [event.target.files[0]],
+        event.target.files[0].name.replace(/\s+/g, "_"),
+        { type: event.target.files[0].type }
+      );
+      setFile(sanitizedFile);
     }
   };
 
@@ -47,7 +52,7 @@ const ImageUploader: React.FC<Props> = ({
       if (!response.ok) throw new Error("Failed to upload image");
 
       const data = await response.json();
-      const newImage: ImageItem = data.data; // ✅ Ensure API returns the correct image type
+      const newImage: ImageItem = data.data;
 
       setNews((prevNews) =>
         prevNews.map((item) =>

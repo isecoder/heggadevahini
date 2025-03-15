@@ -25,14 +25,10 @@ const LatestNews = () => {
       if (!res.ok) throw new Error("Failed to fetch news");
 
       const data = await res.json();
-
-      // ✅ Filter only published news and sort by updatedAt
-      const sortedNews = data.data
-        .filter((item: NewsItem) => item.published) // ✅ Only published news
-        .sort(
-          (a: NewsItem, b: NewsItem) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-        );
+      const sortedNews = data.data.sort(
+        (a: NewsItem, b: NewsItem) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      );
 
       setNews(sortedNews);
     } catch (error) {
@@ -63,13 +59,17 @@ const LatestNews = () => {
           {news.map((item) => {
             // ✅ Use only the `images` array to get the first image
             const imageUrl =
-              item.images.length > 0 ? item.images[0].url : "/placeholder.jpg"; // Fallback image
+              item.images.length > 0 ? item.images[0].url : "/placeholder.jpg";
+            const knTranslation = item.translations?.find(
+              (t) => t.languageCode === "kn"
+            );
+            const defaultTranslation = item.translations?.[0];
 
             return (
               <div key={item.id} className="bg-white p-4 rounded-lg shadow-lg">
                 <Image
                   src={imageUrl}
-                  alt={item.title}
+                  alt={knTranslation?.title || defaultTranslation?.title || "News Image"}
                   width={400}
                   height={250}
                   className="rounded-md"
@@ -79,10 +79,12 @@ const LatestNews = () => {
                   onClick={() => router.push(`/news/${item.id}`)}
                   className="text-xl font-semibold mt-3 cursor-pointer hover:underline"
                 >
-                  {item.title}
+                  {knTranslation?.title || defaultTranslation?.title || "Untitled News"}
                 </h2>
                 <p className="text-gray-700 mt-2">
-                  {item.content.slice(0, 150) + "..."}
+                  {knTranslation?.content?.slice(0, 150) ||
+                    defaultTranslation?.content?.slice(0, 150) ||
+                    "No description available."}
                 </p>
                 <p className="text-sm text-gray-500 mt-2">
                   {new Date(item.updatedAt).toLocaleDateString()}
