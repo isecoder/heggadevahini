@@ -57,10 +57,11 @@ export default function NewsDetails() {
   }, [id]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (!currentUrl && typeof window !== "undefined") {
       setCurrentUrl(window.location.href);
     }
-  }, []);
+  }, [currentUrl]);
+  
 
   useEffect(() => {
     const handleScroll = () => {
@@ -101,7 +102,10 @@ export default function NewsDetails() {
 
   const handleShare = async () => {
     try {
-      const message = `Check out this article: ${title}\nRead more here: ${currentUrl}`;
+      let message = `Check out this article: ${title}.\nRead more here:`;
+      if (typeof navigator.share != "function") {
+        message += `\n ${currentUrl}`;
+      }
       if (navigator.share) {
         await navigator.share({
           title,
