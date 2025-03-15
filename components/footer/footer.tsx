@@ -19,7 +19,7 @@ export default function SiteFooter() {
   const [clickCount, setClickCount] = useState(0);
 
   const handleClick = () => {
-    if (clickCount + 1 === 4) {
+    if (clickCount + 1 === 3) {
       router.push("/about/protected/routes/heggade-vahini/admin-portal/login");
     }
     setClickCount((prev) => prev + 1);
