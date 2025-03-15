@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NewsItem, ImageItem } from "@/app/about/protected/routes/heggade-vahini/admin-portal/admind/news/types/news";
-
+import { useRouter } from "next/navigation";
 interface Props {
   newsId: number;
   setNews: React.Dispatch<React.SetStateAction<NewsItem[]>>;
@@ -13,7 +13,9 @@ const ImageUploader: React.FC<Props> = ({
   setFilteredNews,
 }) => {
   const [file, setFile] = useState<File | null>(null);
-
+  
+  const router = useRouter();
+  
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const sanitizedFile = new File(
@@ -72,6 +74,7 @@ const ImageUploader: React.FC<Props> = ({
 
       console.log("Image uploaded successfully:", newImage);
       alert("Image uploaded successfully");
+      router.refresh();
     } catch (error) {
       console.error("Error uploading image:", error);
       alert("Error uploading image");

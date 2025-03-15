@@ -234,7 +234,7 @@ const NewsItem: React.FC<Props> = ({ item, setNews, setFilteredNews }) => {
   };
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-md relative cursor-pointer">
+    <div className="p-5 bg-white shadow-md rounded-md relative cursor-pointer -mr-8 -ml-8">
       <h3 className="text-lg font-semibold">{title}</h3>
       <p className="text-gray-700">{content}</p>
 
