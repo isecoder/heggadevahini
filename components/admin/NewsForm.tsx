@@ -1,165 +1,100 @@
-"use client";
+import { useState } from "react";
 
-import React, { useState, useEffect } from "react";
-
-// Define types for news and form props
-interface NewsItem {
-  id: number;
-  title: string;
-  description: string;
-  titleKannada?: string;
-  descriptionKannada?: string;
-}
-
-interface NewsFormProps {
-  setNews: React.Dispatch<React.SetStateAction<NewsItem[]>>; // Proper type for setNews function
-  closeForm: () => void; // Close form function
-  editNews?: NewsItem; // Optional editNews prop
-  handleUpdate: (newsData: NewsItem) => Promise<void>; // Update function
-}
-
-const NewsForm: React.FC<NewsFormProps> = ({
-  setNews,
-  closeForm,
-  editNews,
-  handleUpdate,
-}) => {
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [titleKannada, setTitleKannada] = useState<string>("");
-  const [descriptionKannada, setDescriptionKannada] = useState<string>("");
-  const [image, setImage] = useState<File | null>(null);
-
-  useEffect(() => {
-    if (editNews) {
-      setTitle(editNews.title || "");
-      setDescription(editNews.description || "");
-      setTitleKannada(editNews.titleKannada || "");
-      setDescriptionKannada(editNews.descriptionKannada || "");
-    }
-  }, [editNews]);
-
+const NewsForm = ({ onClose, onSubmit = () => window.location.reload() }: { onClose: () => void; onSubmit?: () => void }) => {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  
+  const [published, setPublished] = useState(false);
+  const [loading, setLoading] = useState(false);
+ 
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    const newsData: NewsItem = {
-      id: editNews?.id || 0,
-      title,
-      description,
-      titleKannada,
-      descriptionKannada,
-    };
+    if (!title.trim() || !content.trim()) {
+      alert("Title and content cannot be empty.");
+      setLoading(false);
+      return;
+    }
 
     try {
-      if (editNews) {
-        await handleUpdate(newsData);
-        setNews((prev) =>
-          prev.map((news) =>
-            news.id === editNews.id ? { ...news, ...newsData } : news
-          )
-        );
-      } else {
-        const newsResponse = await fetch(`/api/v1/news/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, description }),
-        });
+    
 
-        if (!newsResponse.ok) throw new Error("Failed to add news");
-        const newsData = await newsResponse.json();
-        const newsId = newsData.id;
-
-        if (titleKannada || descriptionKannada) {
-          await fetch(`/api/v1/news/${newsId}/translations`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              title: titleKannada,
-              description: descriptionKannada,
-            }),
-          });
-        }
-
-        if (image) {
-          const formData = new FormData();
-          formData.append("image", image);
-          await fetch(`/api/v1/news/${newsId}/images`, {
-            method: "POST",
-            body: formData,
-          });
-        }
-
-        setNews((prev) => [
-          ...prev,
-          { id: newsId, title, description, titleKannada, descriptionKannada },
-        ]);
+      const adminToken = sessionStorage.getItem("adminToken");
+      if (!adminToken) {
+        alert("Admin authentication required.");
+        setLoading(false);
+        return;
       }
 
-      closeForm();
+      const response = await fetch("/api/v1/news", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({ title, content, published }),
+      });
+      
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to add news");
+
+      setNewsId(data.id); // Store the news ID for image upload
+     
+     alert("News added successfully");
+      onSubmit();
+      onClose();
     } catch (error) {
-      console.error("Error adding/updating news:", error);
+      console.error("Error adding news:", error);
+      alert("Failed to add news. Check console for details.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mt-4 space-y-4 flex flex-col items-center w-full max-w-lg mx-auto"
-    >
-      <div className="w-full">
-        <label className="block font-medium">Title (English)</label>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <input
+        type="text"
+        placeholder="Title"
+        className="w-full p-2 border rounded"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        required
+      />
+
+      <textarea
+        placeholder="Content"
+        className="w-full p-2 border rounded"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        required
+      />
+
+    
+
+      <label className="flex items-center space-x-2">
         <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="border p-2 w-full"
+          type="checkbox"
+          checked={published}
+          onChange={() => setPublished(!published)}
+          className="w-4 h-4"
         />
+        <span>Publish</span>
+      </label>
+
+      <div className="flex justify-end space-x-2">
+        <button type="button" className="px-4 py-2 bg-gray-300 rounded" onClick={onClose}>
+          Cancel
+        </button>
+        <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded" disabled={loading}>
+          {loading ? "Submitting..." : "Submit"}
+        </button>
       </div>
 
-      <div className="w-full">
-        <label className="block font-medium">Description (English)</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="border p-2 w-full"
-        />
-      </div>
-
-      <div className="w-full">
-        <label className="block font-medium">Title (Kannada)</label>
-        <input
-          type="text"
-          value={titleKannada}
-          onChange={(e) => setTitleKannada(e.target.value)}
-          className="border p-2 w-full"
-        />
-      </div>
-
-      <div className="w-full">
-        <label className="block font-medium">Description (Kannada)</label>
-        <textarea
-          value={descriptionKannada}
-          onChange={(e) => setDescriptionKannada(e.target.value)}
-          className="border p-2 w-full"
-        />
-      </div>
-
-      <div className="w-full">
-        <label className="block font-medium">Upload Image</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setImage(e.target.files?.[0] || null)}
-          className="border p-2 w-full"
-        />
-      </div>
-
-      <button
-        type="submit"
-        className="bg-green-500 text-white px-4 py-2 rounded w-full max-w-xs"
-      >
-        {editNews ? "Update News" : "Upload"}
-      </button>
+      
     </form>
   );
 };
