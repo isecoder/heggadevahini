@@ -52,7 +52,7 @@ const Trending = () => {
   }, []);
 
   return (
-    <section className="p-4 sm:p-6 bg-gray-100 w-full sm:max-w-3xl mx-auto">
+    <section className="p-3 sm:p-6 bg-gray-100 w-full sm:max-w-3xl mx-auto">
       <h2 className="text-xl font-semibold flex justify-between items-center">
         Latest News
         <Link href="/latest" className="text-[#F48634] text-sm">
@@ -72,7 +72,7 @@ const Trending = () => {
 
           return (
             <Link key={item.id} href={`/news/${item.id}`} className="block">
-              <article className="flex items-center gap-3 sm:gap-4 p-3 bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden">
+              <article className="flex items-center gap-3 sm:gap-4 p-2 bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden ">
                 {/* Image Section */}
                 <div className="w-16 h-16 sm:w-24 sm:h-24 flex-shrink-0 relative overflow-hidden rounded-md">
                   <Image
@@ -85,10 +85,10 @@ const Trending = () => {
 
                 {/* Text Section */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-base sm:text-lg text-gray-800 line-clamp-1">
+                  <h3 className="font-semibold text-base sm:text-lg text-gray-800 line-clamp-2">
                     {item.title || "Untitled News"}
                   </h3>
-                  <p className="text-gray-600 text-xs sm:text-sm overflow-hidden line-clamp-2">
+                  <p className="text-gray-600 text-xs sm:text-sm overflow-hidden line-clamp-1">
                     {item.content || "No description available."}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
