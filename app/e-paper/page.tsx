@@ -457,7 +457,7 @@ const EpaperPage = () => {
                         <div className="flex gap-4">
                           <button className="bg-blue-500 text-white px-4 py-2 rounded"onClick={() => {
   setSelectedPdfUrl(epaper.pdfUrl);
-  window.scrollTo({ top: document.body.scrollHeight / 3, behavior: "smooth" });
+  window.scrollTo({ top: document.body.scrollHeight / 2.5, behavior: "smooth" });
 }}>View</button>
                           <a className="bg-green-500 text-white px-4 py-2 rounded" href={epaper.pdfUrl} download>Download</a>
                         </div>
