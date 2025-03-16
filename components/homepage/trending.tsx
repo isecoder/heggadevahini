@@ -55,7 +55,7 @@ const Trending = () => {
     <section className="p-4 sm:p-6 bg-gray-100 w-full sm:max-w-3xl mx-auto">
       <h2 className="text-xl font-semibold flex justify-between items-center">
         Latest News
-        <Link href="/trending" className="text-[#F48634] text-sm">
+        <Link href="/latest" className="text-[#F48634] text-sm">
           View all →
         </Link>
       </h2>
