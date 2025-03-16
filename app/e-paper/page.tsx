@@ -480,7 +480,7 @@ const PdfViewer = ({ fileUrl }: { fileUrl: string }) => {
   return (
     <div className="w-full h-screen flex items-center justify-center ">
       <div className="w-full h-full max-w-[100vw] max-h-[100vh] overflow-scroll">
-        <div className="scale-[1.2] sm:scale-100 origin-top">
+        <div className="scale-[1.2] sm:scale-100 origin-top lg:ml-36 lg:mr-36 ">
           <Viewer fileUrl={fileUrl} />
         </div>
       </div>
