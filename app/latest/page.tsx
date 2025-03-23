@@ -10,6 +10,7 @@ interface NewsItem {
   content: string;
   published: boolean;
   updatedAt: string;
+  createdAt: string;
   images: { id: number; url: string }[];
 }
 
@@ -31,7 +32,7 @@ const LatestNews = () => {
         .filter((item: NewsItem) => item.published) // ✅ Only published news
         .sort(
           (a: NewsItem, b: NewsItem) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
 
       setNews(sortedNews);

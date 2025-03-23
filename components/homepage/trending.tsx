@@ -33,11 +33,11 @@ const Trending = () => {
 
         const trendingNews = data.data
         .filter((item: NewsItem) => item.published === true)
-          .sort(
-            (a: NewsItem, b: NewsItem) =>
-              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          )
-          .slice(0, 4);
+        .sort(
+          (a: NewsItem, b: NewsItem) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        .slice(0, 4);
 
         setNews(trendingNews);
       } catch (error) {

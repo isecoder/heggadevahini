@@ -134,7 +134,7 @@ export default function NewsDetails() {
 
   return (
     <div
-      className="min-h-screen bg-white px-4 sm:px-6 lg:px-8 py-8"
+      className="min-h-screen bg-white px-1 sm:px-6 lg:px-8 py-8"
       ref={articleRef}
     >
       <Head>
@@ -157,7 +157,7 @@ export default function NewsDetails() {
         {title}
       </h1>
 
-      <div className="flex items-center gap-4 text-gray-600 text-sm mb-4">
+      <div className="flex items-center gap-2 text-gray-600 text-sm mb-4 lg:gap-6">
         <Calendar className="h-4 w-4" /> {formattedDate}
         <Clock className="h-4 w-4" /> {readingTime} ನಿಮಿಷಗಳ ಓದು
         <Eye className="h-4 w-4"/>{views} ವೀಕ್ಷಣೆಗಳು                   
