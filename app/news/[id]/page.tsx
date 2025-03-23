@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Calendar, Clock, Share2 } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Share2,Eye } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
@@ -16,6 +16,7 @@ interface News {
   createdAt: string;
   updatedAt: string;
   images: { url: string }[];
+  views: number;
 }
 
 export default function NewsDetails() {
@@ -85,7 +86,7 @@ export default function NewsDetails() {
   const title = news?.title || "No Title";
   const content = news?.content || "No content available.";
   const mainImage = news?.images.length ? news.images[0].url : defaultImage;
-
+  const views = news?.views || 0;
   const formattedDate = useMemo(() => {
     if (!news?.createdAt) return "";
     return new Date(news.createdAt).toLocaleDateString("kn-IN", {
@@ -158,7 +159,8 @@ export default function NewsDetails() {
 
       <div className="flex items-center gap-4 text-gray-600 text-sm mb-4">
         <Calendar className="h-4 w-4" /> {formattedDate}
-        <Clock className="h-4 w-4" /> {readingTime} ನಿಮಿಷ ಓದು
+        <Clock className="h-4 w-4" /> {readingTime} ನಿಮಿಷಗಳ ಓದು
+        <Eye className="h-4 w-4"/>{views} ವೀಕ್ಷಣೆಗಳು                   
       </div>
 
       {mainImage && (
