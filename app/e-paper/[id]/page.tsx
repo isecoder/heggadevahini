@@ -14,19 +14,30 @@ pdfjs.GlobalWorkerOptions.workerSrc =
 
 const EpaperViewer = () => {
   const params = useParams();
-  const id = params?.id as string;
+  const fullParam = params?.id as string;
+  const id = fullParam?.split("-")[0]; // Extract only numeric ID
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (!id) return;
-    fetch(`/api/v1/epaper/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.success) setFileUrl(data.data.pdfUrl);
-        else setError("Failed to load e-paper.");
-      })
-      .catch(() => setError("Something went wrong."));
+
+    const fetchPdf = async () => {
+      try {
+        const res = await fetch(`/api/v1/epaper/${id}`);
+        const data = await res.json();
+
+        if (data?.success && data.data?.pdfUrl) {
+          setFileUrl(data.data.pdfUrl);
+        } else {
+          setError("Failed to load e-paper.");
+        }
+      } catch {
+        setError("Something went wrong while loading the e-paper.");
+      }
+    };
+
+    fetchPdf();
   }, [id]);
 
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;

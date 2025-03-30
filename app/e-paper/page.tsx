@@ -68,6 +68,15 @@ const EpaperPage = () => {
     });
   };
 
+  const getSlugFromFileName = (fileName: string) => {
+    const rawName =
+      fileName.split("/").pop()?.split("_").slice(1).join(" ") || "";
+    return rawName
+      .replace(/\.pdf$/i, "")
+      .replace(/\s+/g, "-")
+      .toLowerCase();
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white py-10 px-6 text-center">
@@ -115,7 +124,9 @@ const EpaperPage = () => {
                         <div className="absolute top-3 right-3 bg-white/90 text-orange-600 text-xs font-medium py-1 px-2 rounded-full">
                           {new Date(epaper.releaseDate).toLocaleDateString(
                             "en-US",
-                            { weekday: "long" }
+                            {
+                              weekday: "long",
+                            }
                           )}
                         </div>
                       </div>
@@ -132,7 +143,19 @@ const EpaperPage = () => {
                         <div className="flex gap-4 flex-wrap">
                           <button
                             className="bg-blue-500 text-white px-4 py-2 rounded"
-                            onClick={() => router.push(`/e-paper/${epaper.id}`)}
+                            onClick={async () => {
+                              try {
+                                const res = await fetch(
+                                  `/api/v1/epaper/${epaper.id}`
+                                );
+                                const data = await res.json();
+                                const fileName = data.data.fileName;
+                                const slug = getSlugFromFileName(fileName);
+                                router.push(`/e-paper/${epaper.id}-${slug}`);
+                              } catch (err) {
+                                console.error("Failed to redirect", err);
+                              }
+                            }}
                           >
                             View
                           </button>
@@ -147,33 +170,32 @@ const EpaperPage = () => {
 
                           <button
                             className="bg-orange-500 text-white px-4 py-2 rounded"
-                            onClick={() => {
-                              const shareUrl = `https://www.heggadevahini.com/e-paper/${epaper.id}`;
-                              const shareTitle =
-                                "Check out this e-paper edition from Heggadevahini!";
-                              const shareText = `Read the edition released on ${formatDate(
-                                epaper.releaseDate
-                              )}.`;
+                            onClick={async () => {
+                              try {
+                                const res = await fetch(
+                                  `/api/v1/epaper/${epaper.id}`
+                                );
+                                const data = await res.json();
+                                const fileName = data.data.fileName;
+                                const slug = getSlugFromFileName(fileName);
+                                const shareUrl = `https://www.heggadevahini.com/e-paper/${epaper.id}-${slug}`;
+                                const shareText = `Read the edition released on ${formatDate(
+                                  epaper.releaseDate
+                                )}.`;
 
-                              if (navigator.share) {
-                                navigator
-                                  .share({
-                                    title: shareTitle,
+                                if (navigator.share) {
+                                  await navigator.share({
+                                    title:
+                                      "Check out this e-paper edition from Heggadevahini!",
                                     text: shareText,
                                     url: shareUrl,
-                                  })
-                                  .catch((err) =>
-                                    console.error(
-                                      "Share cancelled or failed",
-                                      err
-                                    )
-                                  );
-                              } else {
-                                navigator.clipboard
-                                  .writeText(shareUrl)
-                                  .then(() =>
-                                    alert("Share link copied to clipboard!")
-                                  );
+                                  });
+                                } else {
+                                  await navigator.clipboard.writeText(shareUrl);
+                                  alert("Share link copied to clipboard!");
+                                }
+                              } catch (err) {
+                                console.error("Failed to share", err);
                               }
                             }}
                           >
